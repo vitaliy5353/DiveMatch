@@ -8,15 +8,13 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# --- НАСТРОЙКИ БОТА ---
-BOT_TOKEN = os.environ.get("8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU")
-ADMIN_ID = os.environ.get("8378052126")
+# --- НАСТРОЙКИ БОТА (ВПИШИ СВОИ ДАННЫЕ СЮДА) ---
+BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"  # <-- ЗАМЕНИ
+ADMIN_ID = "8378052126" # <-- ЗАМЕНИ
 
 active_codes = {}
-
-# --- БАЗА ДАННЫХ В ПАМЯТИ ---
-online_users = {}  # Теперь это словарь для уникальных сессий
-profiles = []      # Сюда сохраняются анкеты
+online_users = {}
+profiles = []
 
 def send_telegram_msg(chat_id, text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -65,7 +63,6 @@ def verify_code():
     
     return jsonify({"success": False, "message": "Неверный код"}), 400
 
-# --- СОХРАНЕНИЕ И ПОЛУЧЕНИЕ АНКЕТ ---
 @app.route('/api/save_profile', methods=['POST'])
 def save_profile():
     data = request.json
@@ -76,19 +73,15 @@ def save_profile():
 def get_profiles():
     return jsonify(profiles)
 
-# --- ПОДСЧЕТ ОНЛАЙНА (ПО СЕССИЯМ) ---
 @app.route('/api/ping', methods=['POST'])
 def ping():
     data = request.json or {}
     session_id = data.get('session_id')
     if session_id:
         online_users[session_id] = True
-    
-    # Если список пуст, ставим минимум 1
     count = len(online_users) if len(online_users) > 0 else 1
     return jsonify({"count": count})
 
-# --- ОТДАЧА САЙТА ---
 @app.route('/')
 def index():
     try:
