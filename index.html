@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DiveMatch — Знакомства с ботом</title>
+<title>DiveMatch — Знакомства</title>
 <style>
   :root {
     --bg: #0e1621; --bg-sec: #17212b; --bg-ter: #232e3c; --bg-hover: #202b36;
@@ -136,27 +136,23 @@
   .overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
   .overlay.show { display:flex; animation:fade .25s; }
   @keyframes fade { from{opacity:0;} to{opacity:1;} }
-  
   .about-popup { background:var(--bg-sec); border-radius:20px; padding:30px 24px; max-width:400px; width:100%; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); animation:pop .3s ease; }
   .about-popup h2 { font-size:22px; text-align: center; margin-bottom: 15px; color: var(--accent-l); }
   .about-popup p { color:var(--text-s); font-size:14px; line-height: 1.6; margin-bottom: 10px; }
   .about-popup .creator-box { background: var(--bg-ter); border-radius: 10px; padding: 15px; margin-top: 15px; text-align: center; }
   .about-popup .creator-box .name { font-size: 18px; font-weight: 700; color: var(--text); }
   .about-popup .creator-box .title { font-size: 13px; color: var(--accent-l); margin-top: 2px; }
-  
   .ban-popup { background:var(--bg-sec); border-radius:20px; padding:40px 24px; max-width:360px; width:100%; text-align:center; border: 2px solid var(--danger); }
   .ban-popup .ban-icon { font-size: 60px; margin-bottom: 10px; }
   .ban-popup h2 { font-size:24px; color: var(--danger); margin-bottom:12px; }
   .ban-popup p { color:var(--text-s); font-size:14px; }
   .ban-popup .big-btn { width:100%; margin-top:20px; background: var(--bg-ter); }
-  
   .match-popup { background:var(--bg-sec); border-radius:20px; padding:28px 24px; max-width:340px; width:100%; text-align:center; }
   .match-popup h2 { font-size:26px; margin-bottom:8px; color: var(--accent-l); }
   .match-popup .avatar { width:90px; height:90px; font-size:38px; margin:0 auto; border: 3px solid var(--accent);}
   .match-popup .mp-name { font-size:20px; font-weight:700; margin-top:10px; }
   .match-popup .mp-bio { color:var(--text-s); font-size:13px; margin-top:6px; }
   .match-popup .big-btn { width:100%; margin-top:20px; }
-  
   .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--bg-ter); padding:12px 20px; border-radius:10px; font-size:14px; opacity:0; transition:all .3s; z-index:200; border: 1px solid #2e3d4f; }
   .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
   .toast.err { border-color: var(--danger); color: #ff8a80; }
@@ -167,7 +163,6 @@
 <div class="app">
   <div class="sidebar" id="app">
 
-    <!-- ЭКРАН АВТОРИЗАЦИИ -->
     <div class="auth-screen" id="authScreen">
       <div class="auth-box">
         <h2>Вход в DiveMatch</h2>
@@ -209,7 +204,6 @@
       </div>
     </div>
 
-    <!-- ТОПБАР -->
     <div class="topbar" id="topbar" style="display:none;">
       <div class="logo" id="logoBtn">
         <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -225,7 +219,6 @@
       </button>
     </div>
 
-    <!-- СТАРТОВЫЙ ЭКРАН -->
     <div class="start-screen" id="startScreen" style="display:none;">
       <div class="start-heart">
         <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -242,7 +235,6 @@
       </div>
     </div>
 
-    <!-- ЧАТ -->
     <div class="bot-area" id="botArea" style="display:none;">
       <div class="bot-header">
         <div class="avatar" style="background:linear-gradient(135deg,#5288c1,#7b5cd6);">🤖</div>
@@ -263,7 +255,6 @@
       </div>
     </div>
 
-    <!-- АНКЕТА -->
     <div class="view" id="profileView" style="display:none;">
       <h2>Твоя анкета</h2>
       <div class="sub">Заполни данные о себе</div>
@@ -309,7 +300,6 @@
   </div>
 </div>
 
-<!-- ОВЕРЛЕИ -->
 <div class="overlay" id="aboutOverlay">
   <div class="about-popup">
     <h2>О проекте</h2>
@@ -363,10 +353,17 @@ const state = {
 const BAD_FILE_WORDS = ['porn','sex','nude','18+','nsfw','xxx','erotic','hentai','голая','порно','интим','голый','секс'];
 const BAD_TEXT_WORDS = ['хуй','пизда','блядь','сука','ебать','долбоеб','мудак','шлюха','порно','секс','интим'];
 
-// ТЕПЕРЬ ЗДЕСЬ БУДУТ РЕАЛЬНЫЕ ЛЮДИ (загружаются с сервера)
-let PEOPLE = []; 
-
 const $ = id => document.getElementById(id);
+
+// ==========================================
+// ПРОВЕРКА АВТОРИЗАЦИИ ПРИ ЗАГРУЗКЕ
+// ==========================================
+if (localStorage.getItem('isLoggedIn') === 'true') {
+  $('authScreen').style.display = 'none';
+  $('topbar').style.display = 'flex';
+  $('startScreen').style.display = 'flex';
+  updateCounters();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   $('footerCreator').textContent = CREATOR.fullName;
@@ -429,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (data.success) {
         showToast('Успешный вход!', false);
+        localStorage.setItem('isLoggedIn', 'true'); // <--- ЗАПОМИНАЕМ ВХОД
         state.isAuth = true;
         $('authScreen').style.display = 'none';
         $('topbar').style.display = 'flex';
@@ -454,20 +452,30 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   $('startBtn').onclick = goStart;
-  $('restartBtn').onclick = () => { if (confirm('Сбросить аккаунт?')) location.reload(); };
+  $('restartBtn').onclick = () => { 
+    if (confirm('Сбросить аккаунт?')) {
+      localStorage.removeItem('isLoggedIn'); // ВЫХОД
+      location.reload(); 
+    }
+  };
 });
 
-// ОБНОВЛЕНИЕ ОНЛАЙНА (ЗАПРАШИВАЕМ У СЕРВЕРА)
 async function updateCounters() {
+  if (!localStorage.getItem('session_id')) {
+    localStorage.setItem('session_id', Math.random().toString(36).substring(2, 15));
+  }
   try {
-    const res = await fetch('/api/online');
+    const res = await fetch('/api/ping', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: localStorage.getItem('session_id') })
+    });
     const data = await res.json();
     if ($('topCounter')) $('topCounter').textContent = data.count;
     if ($('startCounter')) $('startCounter').textContent = data.count;
   } catch(e) {}
 }
-setInterval(updateCounters, 3000);
-updateCounters();
+setInterval(updateCounters, 5000);
 
 function avatarEl(person, size=32) {
   const d = document.createElement('div');
@@ -537,10 +545,7 @@ function goStart() {
   $('topbar').style.display = 'flex';
   $('botArea').style.display = 'flex';
   $('chatScroll').innerHTML = '';
-  addMessage(`Привет! Я <b>DiveMatch Bot</b> 🤖\nСейчас онлайн: <b id="onlineInChat">...</b>`, {});
-  updateCounters();
-  document.querySelector('#onlineInChat').textContent = document.querySelector('#topCounter').textContent;
-  
+  addMessage(`Привет! Я <b>DiveMatch Bot</b> 🤖\nСейчас онлайн: <b>${$('topCounter').textContent}</b>`, {});
   setTimeout(showFeatures, 600);
 }
 
@@ -565,7 +570,6 @@ function initProfileForm() {
   });
 }
 
-// СОХРАНЕНИЕ АНКЕТЫ (ОТПРАВЛЯЕМ НА СЕРВЕР)
 $('saveProfileBtn').onclick = async () => {
   if (state.isBanned) return;
   const name = $('pName').value.trim(), age = parseInt($('pAge').value), city = $('pCity').value.trim();
@@ -609,17 +613,14 @@ $('saveProfileBtn').onclick = async () => {
   buildQueue();
 };
 
-// ПОЛУЧАЕМ АНКЕТЫ С СЕРВЕРА
 async function buildQueue() {
   try {
     const res = await fetch('/api/get_profiles');
     const allProfiles = await res.json();
     
-    // Ищем людей противоположного пола и исключаем себя
     const looking = state.user.gender === 'Парень' ? 'Девушка' : 'Парень';
     let list = allProfiles.filter(p => p.gender === looking && p.name !== state.user.name);
     
-    // Преобразуем данные сервера в формат карточек
     list = list.map(p => ({
       n: p.name, a: p.age, g: p.gender, city: p.city, goal: p.goal, bio: p.bio, photo: p.photo,
       height: p.height, 
@@ -765,6 +766,8 @@ $('sendBtn').onclick = () => {
   $('msgInput').value = ''; $('msgInput').style.height = 'auto'; $('sendBtn').disabled = true;
   botTyping(700, () => addMessage('Я бот-подборщик 🙂 Жми кнопки.', { buttons: [{ label: 'Что я умею?', cb: showFeatures }] }));
 };
+
+updateCounters();
 </script>
 </body>
-</html>
+  </html>
