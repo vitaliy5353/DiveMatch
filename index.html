@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (data.success) {
         showToast('Успешный вход!', false);
-        localStorage.setItem('isLoggedIn', 'true'); // <--- ЗАПОМИНАЕМ ВХОД
+        localStorage.setItem('isLoggedIn', 'true');
         state.isAuth = true;
         $('authScreen').style.display = 'none';
         $('topbar').style.display = 'flex';
@@ -454,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('startBtn').onclick = goStart;
   $('restartBtn').onclick = () => { 
     if (confirm('Сбросить аккаунт?')) {
-      localStorage.removeItem('isLoggedIn'); // ВЫХОД
+      localStorage.removeItem('isLoggedIn');
       location.reload(); 
     }
   };
