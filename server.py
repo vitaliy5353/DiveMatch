@@ -12,10 +12,10 @@ CORS(app)
 
 # --- НАСТРОЙКИ БОТА (ЗАМЕНИ НА СВОИ) ---
 BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"
-BOT_USERNAME = "DiveMatch_Bot" # Например: DiveMatchBot (без @)
+BOT_USERNAME = "DiveMatch_Bot" # Без @
 ADMIN_ID = "8378052126"
 
-active_codes = {} # База кодов: {phone: {"code": "12345", "used": False, "tg_id": None}}
+active_codes = {}
 online_users = {}
 profiles = []
 
@@ -44,26 +44,36 @@ def telegram_bot_listener():
                 for update in res["result"]:
                     last_update_id = update["update_id"]
                     
-                    # Если пользователь написал боту /start
-                    if "message" in update and "text" in update["message"]:
-                        chat_id = update["message"]["chat"]["id"]
-                        text = update["message"]["text"]
-                        username = update["message"]["from"].get("username", "друг")
+                    if "message" in update:
+                        msg = update["message"]
+                        chat_id = msg["chat"]["id"]
+                        text = msg.get("text", "")
+                        username = msg["from"].get("username", "друг")
                         
+                        # Если написали /start
                         if text.startswith("/start"):
-                            send_telegram_msg(chat_id, f"Привет, {username}! 👋\nОтправь мне свой номер телефона, и я вышлю код для входа на сайт DiveMatch.")
-                            
-                        # Если пользователь отправил контакт (номер)
-                        elif "contact" in update["message"]:
-                            phone = update["message"]["contact"]["phone_number"].replace("+", "")
+                            keyboard = {
+                                "keyboard": [[{
+                                    "text": "📱 Отправить мой номер",
+                                    "request_contact": True
+                                }]],
+                                "resize_keyboard": True,
+                                "one_time_keyboard": True
+                            }
+                            send_telegram_msg(chat_id, f"Привет, {username}! 👋\nНажми на кнопку внизу, чтобы отправить свой номер и получить код для входа на сайт DiveMatch.", reply_markup=keyboard)
+                        
+                        # Если прислали контакт
+                        elif "contact" in msg:
+                            phone = msg["contact"]["phone_number"].replace("+", "")
+                            clean_phone = ''.join(filter(str.isdigit, phone))
                             
                             # Ищем, запрашивал ли этот номер код на сайте
-                            if phone in active_codes:
-                                code = active_codes[phone]["code"]
-                                active_codes[phone]["tg_id"] = chat_id
+                            if clean_phone in active_codes:
+                                code = active_codes[clean_phone]["code"]
+                                active_codes[clean_phone]["tg_id"] = chat_id
                                 send_telegram_msg(chat_id, f"🔑 Ваш код для входа: <code>{code}</code>")
                             else:
-                                send_telegram_msg(chat_id, "⚠️ Этот номер не запрашивал код на сайте. Сначала введите номер на сайте DiveMatch.")
+                                send_telegram_msg(chat_id, "⚠️ Этот номер не запрашивал код на сайте. Сначала введите номер на сайте DiveMatch и нажмите 'Получить код'.")
         except Exception as e:
             print("Ошибка в боте:", e)
         time.sleep(1)
@@ -79,13 +89,11 @@ def request_code():
     if not phone:
         return jsonify({"success": False, "message": "Нет номера"}), 400
     
-    # Очищаем номер от лишних символов
     clean_phone = ''.join(filter(str.isdigit, phone))
     
     code = ''.join(random.choices(string.digits, k=5))
     active_codes[clean_phone] = {"code": code, "used": False, "tg_id": None}
     
-    # Отдаем сайту ссылку на бота, чтобы пользователь перешел туда
     bot_url = f"https://t.me/{BOT_USERNAME}"
     return jsonify({"success": True, "message": "Код создан", "bot_url": bot_url})
 
