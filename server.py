@@ -3,19 +3,20 @@ from flask_cors import CORS
 import requests
 import random
 import string
+import os
 
 app = Flask(__name__)
 CORS(app)
 
 # --- НАСТРОЙКИ БОТА ---
-BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"  # <-- ЗАМЕНИ
-ADMIN_ID = "8378052126"  # <-- ЗАМЕНИ
+BOT_TOKEN = os.environ.get("8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU")
+ADMIN_ID = os.environ.get("8378052126")
 
 active_codes = {}
 
 # --- БАЗА ДАННЫХ В ПАМЯТИ ---
-online_users = set()  # Сюда записываются IP тех, кто зашел
-profiles = []         # Сюда сохраняются анкеты
+online_users = {}  # Теперь это словарь для уникальных сессий
+profiles = []      # Сюда сохраняются анкеты
 
 def send_telegram_msg(chat_id, text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -75,19 +76,21 @@ def save_profile():
 def get_profiles():
     return jsonify(profiles)
 
-# --- ПОДСЧЕТ ОНЛАЙНА ---
-@app.route('/api/online', methods=['GET'])
-def get_online():
-    # Если список пуст (например, после перезагрузки сервера), ставим минимум 1
+# --- ПОДСЧЕТ ОНЛАЙНА (ПО СЕССИЯМ) ---
+@app.route('/api/ping', methods=['POST'])
+def ping():
+    data = request.json or {}
+    session_id = data.get('session_id')
+    if session_id:
+        online_users[session_id] = True
+    
+    # Если список пуст, ставим минимум 1
     count = len(online_users) if len(online_users) > 0 else 1
     return jsonify({"count": count})
 
 # --- ОТДАЧА САЙТА ---
 @app.route('/')
 def index():
-    user_ip = request.remote_addr
-    online_users.add(user_ip)
-    
     try:
         with open('index.html', 'r', encoding='utf-8') as f:
             return f.read()
@@ -95,5 +98,5 @@ def index():
         return "Ошибка: файл index.html не найден!"
 
 if __name__ == '__main__':
-    print("Сервер запущен на http://127.0.0.1:5000")
-    app.run(host='0.0.0.0', port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
