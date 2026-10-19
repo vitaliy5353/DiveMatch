@@ -11,9 +11,9 @@ app = Flask(__name__)
 CORS(app)
 
 # --- НАСТРОЙКИ БОТА (ЗАМЕНИ НА СВОИ) ---
-BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"
+BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"  # <-- ЗАМЕНИ
 BOT_USERNAME = "DiveMatch_Bot" # Без @
-ADMIN_ID = "8378052126"
+ADMIN_ID = "8378052126"  # <-- ЗАМЕНИ
 
 active_codes = {}
 online_users = {}
@@ -50,7 +50,7 @@ def telegram_bot_listener():
                         text = msg.get("text", "")
                         username = msg["from"].get("username", "друг")
                         
-                        # Если написали /start
+                        # 1. Если написали /start
                         if text.startswith("/start"):
                             keyboard = {
                                 "keyboard": [[{
@@ -62,18 +62,16 @@ def telegram_bot_listener():
                             }
                             send_telegram_msg(chat_id, f"Привет, {username}! 👋\nНажми на кнопку внизу, чтобы отправить свой номер и получить код для входа на сайт DiveMatch.", reply_markup=keyboard)
                         
-                        # Если прислали контакт
+                        # 2. Если прислали контакт
                         elif "contact" in msg:
                             phone = msg["contact"]["phone_number"].replace("+", "")
                             clean_phone = ''.join(filter(str.isdigit, phone))
                             
-                            # Ищем, запрашивал ли этот номер код на сайте
-                            if clean_phone in active_codes:
-                                code = active_codes[clean_phone]["code"]
-                                active_codes[clean_phone]["tg_id"] = chat_id
-                                send_telegram_msg(chat_id, f"🔑 Ваш код для входа: <code>{code}</code>")
-                            else:
-                                send_telegram_msg(chat_id, "⚠️ Этот номер не запрашивал код на сайте. Сначала введите номер на сайте DiveMatch и нажмите 'Получить код'.")
+                            # Генерируем код и сохраняем
+                            code = ''.join(random.choices(string.digits, k=5))
+                            active_codes[clean_phone] = {"code": code, "used": False, "tg_id": chat_id}
+                            
+                            send_telegram_msg(chat_id, f"🔑 Ваш код для входа: <code>{code}</code>")
         except Exception as e:
             print("Ошибка в боте:", e)
         time.sleep(1)
@@ -91,8 +89,10 @@ def request_code():
     
     clean_phone = ''.join(filter(str.isdigit, phone))
     
-    code = ''.join(random.choices(string.digits, k=5))
-    active_codes[clean_phone] = {"code": code, "used": False, "tg_id": None}
+    # Если кода еще нет в базе, создаем его
+    if clean_phone not in active_codes:
+        code = ''.join(random.choices(string.digits, k=5))
+        active_codes[clean_phone] = {"code": code, "used": False, "tg_id": None}
     
     bot_url = f"https://t.me/{BOT_USERNAME}"
     return jsonify({"success": True, "message": "Код создан", "bot_url": bot_url})
