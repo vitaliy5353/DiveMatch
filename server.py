@@ -6,6 +6,7 @@ import string
 import os
 import threading
 import time
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -15,9 +16,23 @@ BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"  # <-- ЗАМЕНИ
 BOT_USERNAME = "DiveMatch_Bot" # Без @
 ADMIN_ID = "8378052126"  # <-- ЗАМЕНИ
 
-active_codes = {}
-online_users = {}
-profiles = []
+# --- БАЗА ДАННЫХ В ПАМЯТИ (И ФАЙЛЕ) ---
+DB_FILE = "database.json"
+
+def load_db():
+    if os.path.exists(DB_FILE):
+        with open(DB_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"codes": {}, "profiles": [], "online": {}}
+
+def save_db(data):
+    with open(DB_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+db = load_db()
+active_codes = db["codes"]
+profiles = db["profiles"]
+online_users = db["online"]
 
 def send_telegram_msg(chat_id, text, reply_markup=None):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -31,7 +46,6 @@ def send_telegram_msg(chat_id, text, reply_markup=None):
         print("Ошибка отправки в ТГ:", e)
         return False
 
-# --- ФОНОВЫЙ ПРОЦЕСС БОТА (СЛУШАЕТ СООБЩЕНИЯ) ---
 def telegram_bot_listener():
     last_update_id = 0
     while True:
@@ -50,7 +64,6 @@ def telegram_bot_listener():
                         text = msg.get("text", "")
                         username = msg["from"].get("username", "друг")
                         
-                        # 1. Если написали /start
                         if text.startswith("/start"):
                             keyboard = {
                                 "keyboard": [[{
@@ -60,26 +73,28 @@ def telegram_bot_listener():
                                 "resize_keyboard": True,
                                 "one_time_keyboard": True
                             }
-                            send_telegram_msg(chat_id, f"Привет, {username}! 👋\nНажми на кнопку внизу, чтобы отправить свой номер и получить код для входа на сайт DiveMatch.", reply_markup=keyboard)
+                            send_telegram_msg(chat_id, f"Привет, {username}! 👋\nНажми на кнопку внизу, чтобы получить код.", reply_markup=keyboard)
                         
-                        # 2. Если прислали контакт
                         elif "contact" in msg:
                             phone = msg["contact"]["phone_number"].replace("+", "")
                             clean_phone = ''.join(filter(str.isdigit, phone))
                             
-                            # Генерируем код и сохраняем
-                            code = ''.join(random.choices(string.digits, k=5))
-                            active_codes[clean_phone] = {"code": code, "used": False, "tg_id": chat_id}
+                            # Если код для этого номера уже есть, берем его. Если нет - создаем.
+                            if clean_phone in active_codes:
+                                code = active_codes[clean_phone]["code"]
+                            else:
+                                code = ''.join(random.choices(string.digits, k=5))
+                                active_codes[clean_phone] = {"code": code}
+                                db["codes"] = active_codes
+                                save_db(db)
                             
                             send_telegram_msg(chat_id, f"🔑 Ваш код для входа: <code>{code}</code>")
         except Exception as e:
             print("Ошибка в боте:", e)
         time.sleep(1)
 
-# Запускаем бота в фоне
 threading.Thread(target=telegram_bot_listener, daemon=True).start()
 
-# --- API САЙТА ---
 @app.route('/api/request_code', methods=['POST'])
 def request_code():
     data = request.json
@@ -89,10 +104,12 @@ def request_code():
     
     clean_phone = ''.join(filter(str.isdigit, phone))
     
-    # Если кода еще нет в базе, создаем его
+    # Создаем код, если его еще нет
     if clean_phone not in active_codes:
         code = ''.join(random.choices(string.digits, k=5))
-        active_codes[clean_phone] = {"code": code, "used": False, "tg_id": None}
+        active_codes[clean_phone] = {"code": code}
+        db["codes"] = active_codes
+        save_db(db)
     
     bot_url = f"https://t.me/{BOT_USERNAME}"
     return jsonify({"success": True, "message": "Код создан", "bot_url": bot_url})
@@ -104,7 +121,6 @@ def verify_code():
     user_code = data.get('code')
     clean_phone = ''.join(filter(str.isdigit, phone))
     
-    # Мастер-коды
     if user_code == "1" or user_code == "2":
         return jsonify({"success": True, "message": "Вход по мастер-коду"})
     
@@ -112,11 +128,8 @@ def verify_code():
         return jsonify({"success": False, "message": "Код не запрашивался"}), 400
         
     saved_data = active_codes[clean_phone]
-    if saved_data['used']:
-        return jsonify({"success": False, "message": "Код уже использован"}), 400
         
     if saved_data['code'] == user_code:
-        active_codes[clean_phone]['used'] = True
         return jsonify({"success": True, "message": "Успешный вход"})
     
     return jsonify({"success": False, "message": "Неверный код"}), 400
@@ -125,6 +138,8 @@ def verify_code():
 def save_profile():
     data = request.json
     profiles.append(data)
+    db["profiles"] = profiles
+    save_db(db)
     return jsonify({"success": True})
 
 @app.route('/api/get_profiles', methods=['GET'])
@@ -137,6 +152,8 @@ def ping():
     session_id = data.get('session_id')
     if session_id:
         online_users[session_id] = True
+        db["online"] = online_users
+        save_db(db)
     count = len(online_users) if len(online_users) > 0 else 1
     return jsonify({"count": count})
 
