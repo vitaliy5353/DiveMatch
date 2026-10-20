@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template_string
 from flask_cors import CORS
 import requests
 import random
@@ -13,9 +13,12 @@ app = Flask(__name__)
 CORS(app)
 
 # --- НАСТРОЙКИ БОТА ---
-BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"
+BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"  # <-- ЗАМЕНИ
 BOT_USERNAME = "DiveMatch_Bot"
-ADMIN_ID = "8378052126"
+ADMIN_ID = "8378052126"  # <-- ЗАМЕНИ
+
+# --- ПАРОЛЬ ДЛЯ АДМИНКИ ---
+ADMIN_PASSWORD = "admin2026" # <--- ОБЯЗАТЕЛЬНО СМЕНИ
 
 SECRET_KEY = "DiveMatchSuperSecretKey2026"
 DB_FILE = "database.json"
@@ -26,7 +29,7 @@ def load_db():
             with open(DB_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         except: pass
-    return {"online": {}, "profiles": [], "messages": []}
+    return {"online": {}, "profiles": [], "messages": [], "banned": []}
 
 def save_db(data):
     with open(DB_FILE, "w", encoding="utf-8") as f:
@@ -59,19 +62,12 @@ def telegram_bot_listener():
                 for update in res["result"]:
                     last_update_id = update["update_id"]
                     if "message" in update:
-                        msg = update["message"]
-                        chat_id = msg["chat"]["id"]
-                        text = msg.get("text", "")
+                        msg = update["message"]; chat_id = msg["chat"]["id"]; text = msg.get("text", "")
                         if text.startswith("/start"):
-                            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={
-                                "chat_id": chat_id, "text": "Привет! Нажми кнопку внизу, чтобы получить код.",
-                                "reply_markup": {"keyboard": [[{"text": "📱 Отправить мой номер", "request_contact": True}]], "resize_keyboard": True, "one_time_keyboard": True}
-                            })
+                            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={"chat_id": chat_id, "text": "Привет! Нажми кнопку внизу, чтобы получить код.", "reply_markup": {"keyboard": [[{"text": "📱 Отправить мой номер", "request_contact": True}]], "resize_keyboard": True, "one_time_keyboard": True}})
                         elif "contact" in msg:
                             phone = ''.join(filter(str.isdigit, msg["contact"]["phone_number"]))
-                            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={
-                                "chat_id": chat_id, "text": f"🔑 Ваш код: <code>{generate_code(phone)}</code>", "parse_mode": "HTML"
-                            })
+                            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={"chat_id": chat_id, "text": f"🔑 Ваш код: <code>{generate_code(phone)}</code>", "parse_mode": "HTML"})
         except Exception as e: print("Бот:", e)
         time.sleep(1)
 
@@ -90,14 +86,20 @@ def verify_code():
 
 @app.route('/api/save_profile', methods=['POST'])
 def save_profile():
+    data = request.json
     db = load_db()
-    db["profiles"].append(request.json)
+    if data['name'] in db.get("banned", []):
+        return jsonify({"success": False, "message": "Вы забанены"}), 403
+    db["profiles"].append(data)
     save_db(db)
     return jsonify({"success": True})
 
 @app.route('/api/get_profiles', methods=['GET'])
 def get_profiles():
-    return jsonify(load_db().get("profiles", []))
+    db = load_db()
+    banned = db.get("banned", [])
+    profiles = [p for p in db.get("profiles", []) if p['name'] not in banned]
+    return jsonify(profiles)
 
 @app.route('/api/ping', methods=['POST'])
 def ping():
@@ -120,27 +122,153 @@ def offline():
             save_db(db)
     return jsonify({"success": True})
 
-# --- НОВОЕ: СООБЩЕНИЯ ---
 @app.route('/api/get_messages', methods=['POST'])
 def get_messages():
     data = request.json or {}
-    user1 = data.get('user1')
-    user2 = data.get('user2')
     db = load_db()
-    msgs = [m for m in db.get("messages", []) if (m["from"] == user1 and m["to"] == user2) or (m["from"] == user2 and m["to"] == user1)]
+    msgs = [m for m in db.get("messages", []) if (m["from"] == data.get('user1') and m["to"] == data.get('user2')) or (m["from"] == data.get('user2') and m["to"] == data.get('user1'))]
     return jsonify(msgs)
 
 @app.route('/api/send_message', methods=['POST'])
 def send_message():
     data = request.json
     db = load_db()
-    db["messages"].append({
-        "from": data["from"],
-        "to": data["to"],
-        "text": data["text"],
-        "time": time.strftime("%H:%M")
-    })
+    if data['from'] in db.get("banned", []):
+        return jsonify({"success": False}), 403
+    db["messages"].append({"from": data["from"], "to": data["to"], "text": data["text"], "time": time.strftime("%H:%M")})
     save_db(db)
+    return jsonify({"success": True})
+
+# --- АДМИН-ПАНЕЛЬ ---
+ADMIN_HTML = """
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiveMatch — Админка</title>
+<style>
+    body { font-family: sans-serif; background: #0e1621; color: #fff; padding: 20px; }
+    h1 { color: #5288c1; margin-bottom: 20px; }
+    .box { background: #17212b; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+    .user { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #232e3c; padding: 10px 0; }
+    .btn { background: #e53935; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+    .btn-green { background: #4dcd5e; }
+    .btn-blue { background: #5288c1; }
+    input { padding: 10px; border-radius: 5px; border: none; width: 100%; max-width: 300px; margin-bottom: 10px; }
+    .login-box { text-align: center; margin-top: 20vh; }
+</style>
+</head>
+<body>
+    <div id="login" class="login-box">
+        <h1>Вход в Админку</h1>
+        <input type="password" id="pass" placeholder="Пароль">
+        <button class="btn btn-blue" onclick="login()">Войти</button>
+    </div>
+    <div id="panel" style="display:none;">
+        <h1>Админ-панель</h1>
+        
+        <div class="box">
+            <h3>Забаненные пользователи</h3>
+            <div id="bannedList">Загрузка...</div>
+        </div>
+
+        <div class="box">
+            <h3>Все анкеты</h3>
+            <div id="profilesList">Загрузка...</div>
+        </div>
+    </div>
+
+    <script>
+        let password = "";
+        function login() {
+            password = document.getElementById('pass').value;
+            fetch('/api/admin/data', { headers: { 'X-Password': password } })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) return alert('Неверный пароль');
+                    document.getElementById('login').style.display = 'none';
+                    document.getElementById('panel').style.display = 'block';
+                    renderData(data);
+                });
+        }
+
+        function renderData(data) {
+            const bannedDiv = document.getElementById('bannedList');
+            const profDiv = document.getElementById('profilesList');
+
+            bannedDiv.innerHTML = data.banned.length ? '' : 'Никого нет';
+            data.banned.forEach(name => {
+                bannedDiv.innerHTML += `<div class="user"><span>${name}</span><button class="btn btn-green" onclick="unban('${name}')">Разбанить</button></div>`;
+            });
+
+            profDiv.innerHTML = data.profiles.length ? '' : 'Никого нет';
+            data.profiles.forEach(p => {
+                const isBanned = data.banned.includes(p.name);
+                profDiv.innerHTML += `<div class="user">
+                    <div>
+                        <b>${p.name}, ${p.age}</b><br>
+                        <small>${p.city} | ${p.gender} | Ищет: ${p.looking}</small>
+                    </div>
+                    ${isBanned 
+                        ? `<button class="btn btn-green" onclick="unban('${p.name}')">Разбанить</button>`
+                        : `<button class="btn" onclick="ban('${p.name}')">Забанить</button>`
+                    }
+                </div>`;
+            });
+        }
+
+        function ban(name) {
+            fetch('/api/admin/ban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Password': password },
+                body: JSON.stringify({ name })
+            }).then(() => location.reload());
+        }
+
+        function unban(name) {
+            fetch('/api/admin/unban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Password': password },
+                body: JSON.stringify({ name })
+            }).then(() => location.reload());
+        }
+    </script>
+</body>
+</html>
+"""
+
+@app.route('/admin')
+def admin_panel():
+    return render_template_string(ADMIN_HTML)
+
+@app.route('/api/admin/data', methods=['GET'])
+def admin_data():
+    if request.headers.get('X-Password') != ADMIN_PASSWORD:
+        return jsonify({"error": "Auth"}), 401
+    db = load_db()
+    return jsonify({"profiles": db.get("profiles", []), "banned": db.get("banned", [])})
+
+@app.route('/api/admin/ban', methods=['POST'])
+def admin_ban():
+    if request.headers.get('X-Password') != ADMIN_PASSWORD:
+        return jsonify({"error": "Auth"}), 401
+    name = request.json.get('name')
+    db = load_db()
+    if "banned" not in db: db["banned"] = []
+    if name not in db["banned"]: db["banned"].append(name)
+    save_db(db)
+    return jsonify({"success": True})
+
+@app.route('/api/admin/unban', methods=['POST'])
+def admin_unban():
+    if request.headers.get('X-Password') != ADMIN_PASSWORD:
+        return jsonify({"error": "Auth"}), 401
+    name = request.json.get('name')
+    db = load_db()
+    if "banned" in db and name in db["banned"]:
+        db["banned"].remove(name)
+        save_db(db)
     return jsonify({"success": True})
 
 @app.route('/')
