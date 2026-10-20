@@ -334,30 +334,12 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ==========================================
-// НАСТРОЙКИ
-// ==========================================
 const CREATOR = { fullName: "Радостев Виталий Витальевич" };
-
-const state = { 
-  isAuth: false, 
-  user: { photo: null }, 
-  queue: [], 
-  seen: 0, 
-  matches: 0, 
-  liked: [], 
-  isBanned: false, 
-  currentPhone: '' 
-};
-
+const state = { isAuth: false, user: { photo: null }, queue: [], seen: 0, matches: 0, liked: [], isBanned: false, currentPhone: '' };
 const BAD_FILE_WORDS = ['porn','sex','nude','18+','nsfw','xxx','erotic','hentai','голая','порно','интим','голый','секс'];
 const BAD_TEXT_WORDS = ['хуй','пизда','блядь','сука','ебать','долбоеб','мудак','шлюха','порно','секс','интим'];
-
 const $ = id => document.getElementById(id);
 
-// ==========================================
-// ПРОВЕРКА АВТОРИЗАЦИИ ПРИ ЗАГРУЗКЕ
-// ==========================================
 if (localStorage.getItem('isLoggedIn') === 'true') {
   $('authScreen').style.display = 'none';
   $('topbar').style.display = 'flex';
@@ -379,7 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   });
 
-  // Получить код
   $('tgLoginBtn').onclick = async () => {
     const phone = $('tgPhone').value.trim();
     if (!phone) return showToast('Введите номер', true);
@@ -393,23 +374,22 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const data = await r.json();
       if (data.success) {
-        showToast('Код отправлен в Telegram!', false);
+        showToast('Перейди в Telegram-бота!', false);
+        window.open(data.bot_url, '_blank');
         $('form-tg').classList.remove('active');
         $('form-code').classList.add('active');
         document.querySelectorAll('#codeInputs input')[0].focus();
-      } else showToast('Ошибка: ' + data.message, true);
+      } else showToast('Ошибка', true);
     } catch (err) { showToast('Сервер недоступен', true); }
     finally { $('tgLoginBtn').textContent = 'Получить код в Telegram'; }
   };
 
-  // Ввод кода
   const codeInputs = document.querySelectorAll('#codeInputs input');
   codeInputs.forEach((input, i) => {
     input.addEventListener('input', e => { if (e.target.value && i < codeInputs.length - 1) codeInputs[i + 1].focus(); });
     input.addEventListener('keydown', e => { if (e.key === 'Backspace' && !e.target.value && i > 0) codeInputs[i - 1].focus(); });
   });
 
-  // ПРОВЕРКА КОДА
   $('verifyCodeBtn').onclick = async () => {
     let entered = '';
     codeInputs.forEach(i => entered += i.value);
