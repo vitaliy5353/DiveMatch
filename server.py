@@ -29,7 +29,8 @@ def load_db():
             with open(DB_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         except: pass
-    return {"online": {}, "profiles": [], "messages": [], "banned": [], "reports": []}
+    # banned теперь хранит причину: {"Имя": "Причина бана"}
+    return {"online": {}, "profiles": [], "messages": [], "banned": {}, "reports": []}
 
 def save_db(data):
     with open(DB_FILE, "w", encoding="utf-8") as f:
@@ -88,8 +89,10 @@ def verify_code():
 def save_profile():
     data = request.json
     db = load_db()
-    if data['name'] in db.get("banned", []):
-        return jsonify({"success": False, "message": "Вы забанены"}), 403
+    banned = db.get("banned", {})
+    if data['name'] in banned:
+        reason = banned.get(data['name'], "Нарушение правил")
+        return jsonify({"success": False, "message": f"Вы забанены.\nПричина: {reason}"}), 403
     db["profiles"].append(data)
     save_db(db)
     return jsonify({"success": True})
@@ -97,7 +100,7 @@ def save_profile():
 @app.route('/api/get_profiles', methods=['GET'])
 def get_profiles():
     db = load_db()
-    banned = db.get("banned", [])
+    banned = db.get("banned", {})
     profiles = [p for p in db.get("profiles", []) if p['name'] not in banned]
     return jsonify(profiles)
 
@@ -133,33 +136,23 @@ def get_messages():
 def send_message():
     data = request.json
     db = load_db()
-    if data['from'] in db.get("banned", []):
+    if data['from'] in db.get("banned", {}):
         return jsonify({"success": False}), 403
     db["messages"].append({"from": data["from"], "to": data["to"], "text": data["text"], "time": time.strftime("%H:%M")})
     save_db(db)
     return jsonify({"success": True})
 
-# --- ЖАЛОБЫ ---
 @app.route('/api/report', methods=['POST'])
 def report():
     data = request.json
     db = load_db()
-    
-    report_data = {
-        "from": data['from'],
-        "to": data['to'],
-        "reason": data['reason'],
-        "time": time.strftime("%d.%m %H:%M")
-    }
-    
+    report_data = {"from": data['from'], "to": data['to'], "reason": data['reason'], "time": time.strftime("%d.%m %H:%M")}
     if "reports" not in db: db["reports"] = []
     db["reports"].append(report_data)
     save_db(db)
     
-    # Отправляем жалобу в Telegram
-    msg = f"🚩 <b>НОВАЯ ЖАЛОБА!</b>\nКто пожаловался: {data['from']}\nНа кого: {data['to']}\nПричина: {data['reason']}"
+    msg = f"🚩 <b>НОВАЯ ЖАЛОБА!</b>\nКто: {data['from']}\nНа кого: {data['to']}\nПричина: {data['reason']}"
     requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={"chat_id": ADMIN_ID, "text": msg, "parse_mode": "HTML"})
-    
     return jsonify({"success": True})
 
 # --- АДМИН-ПАНЕЛЬ ---
@@ -196,9 +189,9 @@ ADMIN_HTML = """
         <h1>Админ-панель</h1>
         
         <div class="tabs">
-            <div class="tab active" onclick="showTab('profiles')">Анкеты</div>
-            <div class="tab" onclick="showTab('reports')">Жалобы</div>
-            <div class="tab" onclick="showTab('banned')">Забаненные</div>
+            <div class="tab active" onclick="showTab('profiles', this)">Анкеты</div>
+            <div class="tab" onclick="showTab('reports', this)">Жалобы</div>
+            <div class="tab" onclick="showTab('banned', this)">Забаненные</div>
         </div>
         
         <div class="box" id="tab-profiles">
@@ -234,25 +227,24 @@ ADMIN_HTML = """
                 });
         }
 
-        function showTab(name) {
+        function showTab(name, el) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.box').forEach(b => b.style.display = 'none');
-            
-            event.target.classList.add('active');
+            el.classList.add('active');
             document.getElementById('tab-' + name).style.display = 'block';
         }
 
         function renderAll() {
             renderProfiles(adminData.profiles || []);
             renderReports(adminData.reports || []);
-            renderBanned(adminData.banned || []);
+            renderBanned(adminData.banned || {});
         }
 
         function renderProfiles(profiles) {
             const div = document.getElementById('profilesList');
             div.innerHTML = profiles.length ? '' : 'Никого нет';
             profiles.forEach(p => {
-                const isBanned = adminData.banned.includes(p.name);
+                const isBanned = adminData.banned && adminData.banned[p.name];
                 div.innerHTML += `<div class="user">
                     <div><b>${p.name}, ${p.age}</b><br><small>${p.city} | ${p.gender}</small></div>
                     ${isBanned 
@@ -278,17 +270,23 @@ ADMIN_HTML = """
 
         function renderBanned(banned) {
             const div = document.getElementById('bannedList');
-            div.innerHTML = banned.length ? '' : 'Никого нет';
-            banned.forEach(name => {
-                div.innerHTML += `<div class="user"><span>${name}</span><button class="btn btn-green" onclick="unban('${name}')">Разбанить</button></div>`;
+            const keys = Object.keys(banned || {});
+            div.innerHTML = keys.length ? '' : 'Никого нет';
+            keys.forEach(name => {
+                div.innerHTML += `<div class="user">
+                    <div><b>${name}</b><br><small>Причина: ${banned[name]}</small></div>
+                    <button class="btn btn-green" onclick="unban('${name}')">Разбанить</button>
+                </div>`;
             });
         }
 
         function ban(name) {
+            const reason = prompt(`Введите причину бана для ${name}:`, "Оскорбления");
+            if (!reason) return;
             fetch('/api/admin/ban', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-Password': password },
-                body: JSON.stringify({ name })
+                body: JSON.stringify({ name, reason })
             }).then(() => location.reload());
         }
 
@@ -313,16 +311,17 @@ def admin_data():
     if request.headers.get('X-Password') != ADMIN_PASSWORD:
         return jsonify({"error": "Auth"}), 401
     db = load_db()
-    return jsonify({"profiles": db.get("profiles", []), "banned": db.get("banned", []), "reports": db.get("reports", [])})
+    return jsonify({"profiles": db.get("profiles", []), "banned": db.get("banned", {}), "reports": db.get("reports", [])})
 
 @app.route('/api/admin/ban', methods=['POST'])
 def admin_ban():
     if request.headers.get('X-Password') != ADMIN_PASSWORD:
         return jsonify({"error": "Auth"}), 401
     name = request.json.get('name')
+    reason = request.json.get('reason', "Нарушение правил")
     db = load_db()
-    if "banned" not in db: db["banned"] = []
-    if name not in db["banned"]: db["banned"].append(name)
+    if "banned" not in db: db["banned"] = {}
+    db["banned"][name] = reason
     save_db(db)
     return jsonify({"success": True})
 
@@ -333,7 +332,7 @@ def admin_unban():
     name = request.json.get('name')
     db = load_db()
     if "banned" in db and name in db["banned"]:
-        db["banned"].remove(name)
+        del db["banned"][name]
         save_db(db)
     return jsonify({"success": True})
 
