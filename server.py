@@ -12,7 +12,7 @@ import json
 app = Flask(__name__)
 CORS(app)
 
-# --- НАСТРОЙКИ БОТА ---
+# --- НАСТРОЙКИ БОТА (ЗАМЕНИ НА СВОИ) ---
 BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"  # <-- ЗАМЕНИ
 BOT_USERNAME = "DiveMatch_Bot"
 ADMIN_ID = "8378052126"  # <-- ЗАМЕНИ
@@ -38,14 +38,15 @@ def generate_code(phone):
     num = int(hash_str, 16) % 90000 + 10000
     return str(num)
 
-# --- ОЧИСТКА СТАРЫХ ПОЛЬЗОВАТЕЛЕЙ (ЧТОБЫ ОНЛАЙН НЕ ЗАВИСАЛ) ---
+# --- ОЧИСТКА СТАРЫХ ПОЛЬЗОВАТЕЛЕЙ (УСКОРЕННАЯ) ---
 def cleanup_online():
     while True:
         try:
             db = load_db()
             now = time.time()
-            # Удаляем тех, кто не заходил больше 2 минут
-            to_delete = [sid for sid, last_seen in db.get("online", {}).items() if now - last_seen > 120]
+            
+            # ТЕПЕРЬ УДАЛЯЕМ ТЕХ, КТО НЕ ЗАХОДИЛ 30 СЕКУНД
+            to_delete = [sid for sid, last_seen in db.get("online", {}).items() if now - last_seen > 30]
             if to_delete:
                 for sid in to_delete:
                     del db["online"][sid]
@@ -53,7 +54,8 @@ def cleanup_online():
                 print(f"[ОЧИСТКА] Удалено {len(to_delete)} неактивных пользователей")
         except Exception as e:
             print("Ошибка очистки:", e)
-        time.sleep(30)
+        # ПРОВЕРЯЕМ КАЖДЫЕ 10 СЕКУНД
+        time.sleep(10)
 
 threading.Thread(target=cleanup_online, daemon=True).start()
 
