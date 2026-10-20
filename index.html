@@ -31,20 +31,9 @@
   .icon-btn svg { width:22px; height:22px; fill:currentColor; }
 
   /* ПРЕЛОАДЕР */
-  .preloader {
-    position: fixed; inset: 0; background: var(--bg); z-index: 999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    transition: opacity 0.5s;
-  }
+  .preloader { position: fixed; inset: 0; background: var(--bg); z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
   .preloader.hidden { opacity: 0; pointer-events: none; }
-  .preloader-heart {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: linear-gradient(135deg, #5288c1, #7b5cd6);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 40px rgba(82, 136, 193, 0.5);
-    animation: pulse-heart 1.5s infinite;
-    margin-bottom: 20px;
-  }
+  .preloader-heart { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #5288c1, #7b5cd6); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(82, 136, 193, 0.5); animation: pulse-heart 1.5s infinite; margin-bottom: 20px; }
   @keyframes pulse-heart { 0%,100%{transform:scale(1);} 50%{transform:scale(1.15);} }
   .preloader-heart svg { width: 40px; height: 40px; fill: #fff; }
   .preloader-text { color: var(--text-s); font-weight: 600; letter-spacing: 1px; animation: blink-text 1.5s infinite; }
@@ -135,15 +124,7 @@
   .mc-info-row { display:flex; gap:12px; margin-top:6px; font-size:13px; color:var(--text); background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 8px; flex-wrap: wrap; justify-content: center;}
 
   /* АНКЕТА */
-  .view { 
-    flex:1; 
-    overflow-y:auto; /* Включаем прокрутку */
-    padding:24px 20px; 
-    display:flex; 
-    flex-direction:column; 
-    gap:16px; 
-    padding-bottom: 40px;
-  }
+  .view { flex:1; overflow-y:auto; padding:24px 20px; display:flex; flex-direction:column; gap:16px; padding-bottom: 40px; }
   .view h2 { font-size:22px; text-align:center; }
   .view .sub { text-align:center; color:var(--text-s); font-size:14px; margin-top:-8px; margin-bottom: 10px;}
   .field { display:flex; flex-direction:column; gap:6px; }
@@ -154,14 +135,7 @@
   .chip.sel { background:var(--accent); border-color:var(--accent); color:#fff; }
   .big-btn { background:var(--accent); color:#fff; border:none; border-radius:12px; padding:15px; font-size:16px; font-weight:600; cursor:pointer; margin-top:8px; }
   .creator-signature { text-align: center; font-size: 12px; color: var(--text-m); margin-top: 10px; }
-  
-  .photo-uploader { 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    width: 120px; height: 120px; border-radius: 50%; background: var(--bg-ter); 
-    border: 2px dashed #2e3d4f; cursor: pointer; overflow: hidden; 
-    position: relative; margin: 10px auto 20px auto; 
-    flex-shrink: 0; /* Запрещаем сжимать кружок */
-  }
+  .photo-uploader { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 120px; height: 120px; border-radius: 50%; background: var(--bg-ter); border: 2px dashed #2e3d4f; cursor: pointer; overflow: hidden; position: relative; margin: 10px auto 20px auto; flex-shrink: 0; }
   .photo-uploader img { width: 100%; height: 100%; object-fit: cover; }
   .photo-uploader .upload-icon { font-size: 32px; color: var(--text-s); }
   .photo-uploader .upload-text { font-size: 12px; color: var(--text-s); margin-top: 4px; }
@@ -392,10 +366,16 @@ const BAD_FILE_WORDS = ['porn','sex','nude','18+','nsfw','xxx','erotic','hentai'
 const BAD_TEXT_WORDS = ['хуй','пизда','блядь','сука','ебать','долбоеб','мудак','шлюха','порно','секс','интим'];
 const $ = id => document.getElementById(id);
 
+// ПРИ ЗАГРУЗКЕ
 window.addEventListener('load', () => {
-  setTimeout(() => {
-    $('preloader').classList.add('hidden');
-  }, 600);
+  setTimeout(() => { $('preloader').classList.add('hidden'); }, 600);
+});
+
+// СИГНАЛ "Я УШЕЛ" ПРИ ЗАКРЫТИИ
+window.addEventListener('beforeunload', () => {
+  if (localStorage.getItem('session_id')) {
+    navigator.sendBeacon('/api/offline', JSON.stringify({ session_id: localStorage.getItem('session_id') }));
+  }
 });
 
 if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -808,4 +788,4 @@ $('sendBtn').onclick = () => {
 updateCounters();
 </script>
 </body>
-</html>
+                                                </html>
