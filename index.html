@@ -169,7 +169,6 @@
 </head>
 <body>
 
-<!-- ПРЕЛОАДЕР -->
 <div class="preloader" id="preloader">
   <div class="preloader-heart">
     <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -179,7 +178,6 @@
 
 <div class="app">
   <div class="sidebar" id="app">
-
     <div class="auth-screen" id="authScreen">
       <div class="auth-box">
         <h2>Вход в DiveMatch</h2>
@@ -289,11 +287,21 @@
       <div class="field"><label>Возраст</label><input type="number" id="pAge" placeholder="18+" min="18" max="99"></div>
       <div class="field"><label>Город</label><input type="text" id="pCity" placeholder="Например: Москва" maxlength="30"></div>
       
+      <!-- ТВОЙ ПОЛ -->
       <div class="field">
         <label>Твой пол</label>
         <div class="chips" id="genderChips">
           <div class="chip" data-val="Парень">Парень</div>
           <div class="chip" data-val="Девушка">Девушка</div>
+        </div>
+      </div>
+
+      <!-- КОГО ИЩЕШЬ -->
+      <div class="field">
+        <label>Кого ищешь?</label>
+        <div class="chips" id="lookingChips">
+          <div class="chip" data-val="Парня">Парня</div>
+          <div class="chip" data-val="Девушку">Девушку</div>
         </div>
       </div>
 
@@ -366,12 +374,7 @@ const BAD_FILE_WORDS = ['porn','sex','nude','18+','nsfw','xxx','erotic','hentai'
 const BAD_TEXT_WORDS = ['хуй','пизда','блядь','сука','ебать','долбоеб','мудак','шлюха','порно','секс','интим'];
 const $ = id => document.getElementById(id);
 
-// ПРИ ЗАГРУЗКЕ
-window.addEventListener('load', () => {
-  setTimeout(() => { $('preloader').classList.add('hidden'); }, 600);
-});
-
-// СИГНАЛ "Я УШЕЛ" ПРИ ЗАКРЫТИИ
+window.addEventListener('load', () => { setTimeout(() => { $('preloader').classList.add('hidden'); }, 600); });
 window.addEventListener('beforeunload', () => {
   if (localStorage.getItem('session_id')) {
     navigator.sendBeacon('/api/offline', JSON.stringify({ session_id: localStorage.getItem('session_id') }));
@@ -574,7 +577,8 @@ function askProfile() {
 }
 
 function initProfileForm() {
-  const gc = $('genderChips'), goalc = $('goalChips');
+  const gc = $('genderChips'), goalc = $('goalChips'), lc = $('lookingChips');
+  
   gc.querySelectorAll('.chip').forEach(c => {
     c.onclick = () => {
       gc.querySelectorAll('.chip').forEach(x => x.classList.remove('sel'));
@@ -583,6 +587,11 @@ function initProfileForm() {
       $('femaleFields').style.display = c.dataset.val === 'Девушка' ? 'flex' : 'none';
     };
   });
+
+  lc.querySelectorAll('.chip').forEach(c => {
+    c.onclick = () => { lc.querySelectorAll('.chip').forEach(x => x.classList.remove('sel')); c.classList.add('sel'); };
+  });
+
   goalc.querySelectorAll('.chip').forEach(c => {
     c.onclick = () => { goalc.querySelectorAll('.chip').forEach(x => x.classList.remove('sel')); c.classList.add('sel'); };
   });
@@ -592,13 +601,15 @@ $('saveProfileBtn').onclick = async () => {
   if (state.isBanned) return;
   const name = $('pName').value.trim(), age = parseInt($('pAge').value), city = $('pCity').value.trim();
   const gender = document.querySelector('#genderChips .chip.sel')?.dataset.val;
+  const looking = document.querySelector('#lookingChips .chip.sel')?.dataset.val;
   const goal = document.querySelector('#goalChips .chip.sel')?.dataset.val;
   const bio = $('pBio').value.trim();
   
   if (!name) return showToast('Введи имя');
   if (!age || age < 18) return showToast('Возраст 18+');
   if (!city) return showToast('Укажи город');
-  if (!gender) return showToast('Выбери пол');
+  if (!gender) return showToast('Выбери свой пол');
+  if (!looking) return showToast('Выбери кого ищешь');
   if (!goal) return showToast('Выбери цель');
   if (checkBadText(name) || checkBadText(bio) || checkBadText(city)) return banUser('Обнаружен запрещённый контент.');
 
@@ -611,7 +622,7 @@ $('saveProfileBtn').onclick = async () => {
     if (!height || !extra) return showToast('Заполни рост и хобби');
   }
   
-  state.user = { name, age, city, gender, goal, bio: bio || '—', photo: state.user.photo, height, extra };
+  state.user = { name, age, city, gender, looking, goal, bio: bio || '—', photo: state.user.photo, height, extra };
 
   $('saveProfileBtn').textContent = 'Сохранение...';
   
@@ -636,8 +647,10 @@ async function buildQueue() {
     const res = await fetch('/api/get_profiles');
     const allProfiles = await res.json();
     
-    const looking = state.user.gender === 'Парень' ? 'Девушка' : 'Парень';
-    let list = allProfiles.filter(p => p.gender === looking && p.name !== state.user.name);
+    // Теперь ищем по полю looking (кого ищешь)
+    const searchGender = state.user.looking === 'Парня' ? 'Парень' : 'Девушка';
+    
+    let list = allProfiles.filter(p => p.gender === searchGender && p.name !== state.user.name);
     
     list = list.map(p => ({
       n: p.name, a: p.age, g: p.gender, city: p.city, goal: p.goal, bio: p.bio, photo: p.photo,
@@ -788,4 +801,4 @@ $('sendBtn').onclick = () => {
 updateCounters();
 </script>
 </body>
-                                                </html>
+  </html>
