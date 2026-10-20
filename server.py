@@ -29,7 +29,7 @@ def load_db():
             with open(DB_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         except: pass
-    return {"online": {}, "profiles": [], "messages": [], "banned": []}
+    return {"online": {}, "profiles": [], "messages": [], "banned": [], "reports": []}
 
 def save_db(data):
     with open(DB_FILE, "w", encoding="utf-8") as f:
@@ -139,6 +139,29 @@ def send_message():
     save_db(db)
     return jsonify({"success": True})
 
+# --- ЖАЛОБЫ ---
+@app.route('/api/report', methods=['POST'])
+def report():
+    data = request.json
+    db = load_db()
+    
+    report_data = {
+        "from": data['from'],
+        "to": data['to'],
+        "reason": data['reason'],
+        "time": time.strftime("%d.%m %H:%M")
+    }
+    
+    if "reports" not in db: db["reports"] = []
+    db["reports"].append(report_data)
+    save_db(db)
+    
+    # Отправляем жалобу в Telegram
+    msg = f"🚩 <b>НОВАЯ ЖАЛОБА!</b>\nКто пожаловался: {data['from']}\nНа кого: {data['to']}\nПричина: {data['reason']}"
+    requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={"chat_id": ADMIN_ID, "text": msg, "parse_mode": "HTML"})
+    
+    return jsonify({"success": True})
+
 # --- АДМИН-ПАНЕЛЬ ---
 ADMIN_HTML = """
 <!DOCTYPE html>
@@ -157,6 +180,10 @@ ADMIN_HTML = """
     .btn-blue { background: #5288c1; }
     input { padding: 10px; border-radius: 5px; border: none; width: 100%; max-width: 300px; margin-bottom: 10px; }
     .login-box { text-align: center; margin-top: 20vh; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tab { padding: 10px 20px; background: #232e3c; border-radius: 5px; cursor: pointer; }
+    .tab.active { background: #5288c1; }
+    .report-item { background: #232e3c; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -168,19 +195,32 @@ ADMIN_HTML = """
     <div id="panel" style="display:none;">
         <h1>Админ-панель</h1>
         
-        <div class="box">
-            <h3>Забаненные пользователи</h3>
-            <div id="bannedList">Загрузка...</div>
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('profiles')">Анкеты</div>
+            <div class="tab" onclick="showTab('reports')">Жалобы</div>
+            <div class="tab" onclick="showTab('banned')">Забаненные</div>
         </div>
-
-        <div class="box">
+        
+        <div class="box" id="tab-profiles">
             <h3>Все анкеты</h3>
             <div id="profilesList">Загрузка...</div>
+        </div>
+
+        <div class="box" id="tab-reports" style="display:none;">
+            <h3>Жалобы пользователей</h3>
+            <div id="reportsList">Загрузка...</div>
+        </div>
+
+        <div class="box" id="tab-banned" style="display:none;">
+            <h3>Забаненные</h3>
+            <div id="bannedList">Загрузка...</div>
         </div>
     </div>
 
     <script>
         let password = "";
+        let adminData = {};
+
         function login() {
             password = document.getElementById('pass').value;
             fetch('/api/admin/data', { headers: { 'X-Password': password } })
@@ -189,32 +229,58 @@ ADMIN_HTML = """
                     if (data.error) return alert('Неверный пароль');
                     document.getElementById('login').style.display = 'none';
                     document.getElementById('panel').style.display = 'block';
-                    renderData(data);
+                    adminData = data;
+                    renderAll();
                 });
         }
 
-        function renderData(data) {
-            const bannedDiv = document.getElementById('bannedList');
-            const profDiv = document.getElementById('profilesList');
+        function showTab(name) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.box').forEach(b => b.style.display = 'none');
+            
+            event.target.classList.add('active');
+            document.getElementById('tab-' + name).style.display = 'block';
+        }
 
-            bannedDiv.innerHTML = data.banned.length ? '' : 'Никого нет';
-            data.banned.forEach(name => {
-                bannedDiv.innerHTML += `<div class="user"><span>${name}</span><button class="btn btn-green" onclick="unban('${name}')">Разбанить</button></div>`;
-            });
+        function renderAll() {
+            renderProfiles(adminData.profiles || []);
+            renderReports(adminData.reports || []);
+            renderBanned(adminData.banned || []);
+        }
 
-            profDiv.innerHTML = data.profiles.length ? '' : 'Никого нет';
-            data.profiles.forEach(p => {
-                const isBanned = data.banned.includes(p.name);
-                profDiv.innerHTML += `<div class="user">
-                    <div>
-                        <b>${p.name}, ${p.age}</b><br>
-                        <small>${p.city} | ${p.gender} | Ищет: ${p.looking}</small>
-                    </div>
+        function renderProfiles(profiles) {
+            const div = document.getElementById('profilesList');
+            div.innerHTML = profiles.length ? '' : 'Никого нет';
+            profiles.forEach(p => {
+                const isBanned = adminData.banned.includes(p.name);
+                div.innerHTML += `<div class="user">
+                    <div><b>${p.name}, ${p.age}</b><br><small>${p.city} | ${p.gender}</small></div>
                     ${isBanned 
                         ? `<button class="btn btn-green" onclick="unban('${p.name}')">Разбанить</button>`
                         : `<button class="btn" onclick="ban('${p.name}')">Забанить</button>`
                     }
                 </div>`;
+            });
+        }
+
+        function renderReports(reports) {
+            const div = document.getElementById('reportsList');
+            div.innerHTML = reports.length ? '' : 'Жалоб нет';
+            reports.forEach(r => {
+                div.innerHTML += `<div class="report-item">
+                    <b>${r.from}</b> пожаловался на <b>${r.to}</b><br>
+                    Причина: ${r.reason}<br>
+                    <small>${r.time}</small><br><br>
+                    <button class="btn" onclick="ban('${r.to}')">Забанить ${r.to}</button>
+                </div>`;
+            });
+        }
+
+        function renderBanned(banned) {
+            const div = document.getElementById('bannedList');
+            div.innerHTML = banned.length ? '' : 'Никого нет';
+            banned.forEach(name => {
+                div.innerHTML += `<div class="user"><span>${name}</span><button class="btn btn-green" onclick="unban('${name}')">Разбанить</button></div>`;
             });
         }
 
@@ -247,7 +313,7 @@ def admin_data():
     if request.headers.get('X-Password') != ADMIN_PASSWORD:
         return jsonify({"error": "Auth"}), 401
     db = load_db()
-    return jsonify({"profiles": db.get("profiles", []), "banned": db.get("banned", [])})
+    return jsonify({"profiles": db.get("profiles", []), "banned": db.get("banned", []), "reports": db.get("reports", [])})
 
 @app.route('/api/admin/ban', methods=['POST'])
 def admin_ban():
