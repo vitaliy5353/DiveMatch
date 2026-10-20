@@ -135,7 +135,15 @@
   .mc-info-row { display:flex; gap:12px; margin-top:6px; font-size:13px; color:var(--text); background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 8px; flex-wrap: wrap; justify-content: center;}
 
   /* АНКЕТА */
-  .view { flex:1; overflow-y:auto; padding:24px 20px; display:flex; flex-direction:column; gap:16px; }
+  .view { 
+    flex:1; 
+    overflow-y:auto; /* Включаем прокрутку */
+    padding:24px 20px; 
+    display:flex; 
+    flex-direction:column; 
+    gap:16px; 
+    padding-bottom: 40px;
+  }
   .view h2 { font-size:22px; text-align:center; }
   .view .sub { text-align:center; color:var(--text-s); font-size:14px; margin-top:-8px; margin-bottom: 10px;}
   .field { display:flex; flex-direction:column; gap:6px; }
@@ -146,7 +154,14 @@
   .chip.sel { background:var(--accent); border-color:var(--accent); color:#fff; }
   .big-btn { background:var(--accent); color:#fff; border:none; border-radius:12px; padding:15px; font-size:16px; font-weight:600; cursor:pointer; margin-top:8px; }
   .creator-signature { text-align: center; font-size: 12px; color: var(--text-m); margin-top: 10px; }
-  .photo-uploader { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 120px; height: 120px; border-radius: 50%; background: var(--bg-ter); border: 2px dashed #2e3d4f; cursor: pointer; overflow: hidden; position: relative; margin: 0 auto; }
+  
+  .photo-uploader { 
+    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    width: 120px; height: 120px; border-radius: 50%; background: var(--bg-ter); 
+    border: 2px dashed #2e3d4f; cursor: pointer; overflow: hidden; 
+    position: relative; margin: 10px auto 20px auto; 
+    flex-shrink: 0; /* Запрещаем сжимать кружок */
+  }
   .photo-uploader img { width: 100%; height: 100%; object-fit: cover; }
   .photo-uploader .upload-icon { font-size: 32px; color: var(--text-s); }
   .photo-uploader .upload-text { font-size: 12px; color: var(--text-s); margin-top: 4px; }
@@ -286,6 +301,7 @@
     <div class="view" id="profileView" style="display:none;">
       <h2>Твоя анкета</h2>
       <div class="sub">Заполни данные о себе</div>
+      
       <div class="photo-uploader" id="photoUploader" onclick="document.getElementById('photoInput').click()">
         <div id="photoPlaceholder" style="display:flex; flex-direction:column; align-items:center;">
           <span class="upload-icon">📷</span>
@@ -294,9 +310,11 @@
         <img id="photoPreview" style="display:none;" alt="Фото">
       </div>
       <input type="file" id="photoInput" accept="image/*">
+      
       <div class="field"><label>Имя</label><input type="text" id="pName" placeholder="Как тебя зовут?" maxlength="20"></div>
       <div class="field"><label>Возраст</label><input type="number" id="pAge" placeholder="18+" min="18" max="99"></div>
       <div class="field"><label>Город</label><input type="text" id="pCity" placeholder="Например: Москва" maxlength="30"></div>
+      
       <div class="field">
         <label>Твой пол</label>
         <div class="chips" id="genderChips">
@@ -304,14 +322,17 @@
           <div class="chip" data-val="Девушка">Девушка</div>
         </div>
       </div>
+
       <div id="maleFields" style="display:none; flex-direction:column; gap:16px;">
         <div class="field"><label>Рост (см)</label><input type="number" id="pHeightM" placeholder="180"></div>
         <div class="field"><label>Работа/учёба</label><input type="text" id="pJobM" placeholder="IT, бизнес..."></div>
       </div>
+
       <div id="femaleFields" style="display:none; flex-direction:column; gap:16px;">
         <div class="field"><label>Рост (см)</label><input type="number" id="pHeightF" placeholder="165"></div>
         <div class="field"><label>Хобби</label><input type="text" id="pHobbyF" placeholder="Танцы..."></div>
       </div>
+
       <div class="field">
         <label>Цель</label>
         <div class="chips" id="goalChips">
@@ -320,8 +341,11 @@
           <div class="chip" data-val="Прогулки">Прогулки</div>
         </div>
       </div>
+      
       <div class="field"><label>О себе</label><input type="text" id="pBio" placeholder="Девиз" maxlength="80"></div>
+      
       <button class="big-btn" id="saveProfileBtn">Сохранить</button>
+      
       <div class="creator-signature">Разработал: <b>Радостев Виталий Витальевич</b></div>
     </div>
 
@@ -368,11 +392,10 @@ const BAD_FILE_WORDS = ['porn','sex','nude','18+','nsfw','xxx','erotic','hentai'
 const BAD_TEXT_WORDS = ['хуй','пизда','блядь','сука','ебать','долбоеб','мудак','шлюха','порно','секс','интим'];
 const $ = id => document.getElementById(id);
 
-// СКРЫВАЕМ ПРЕЛОАДЕР ПОСЛЕ ЗАГРУЗКИ
 window.addEventListener('load', () => {
   setTimeout(() => {
     $('preloader').classList.add('hidden');
-  }, 600); // Небольшая задержка, чтобы анимация была видна
+  }, 600);
 });
 
 if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -785,4 +808,4 @@ $('sendBtn').onclick = () => {
 updateCounters();
 </script>
 </body>
-          </html>
+</html>
