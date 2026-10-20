@@ -30,7 +30,6 @@
   .icon-btn:hover { background:var(--bg-ter); color:var(--text); }
   .icon-btn svg { width:22px; height:22px; fill:currentColor; }
 
-  /* ПРЕЛОАДЕР */
   .preloader { position: fixed; inset: 0; background: var(--bg); z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
   .preloader.hidden { opacity: 0; pointer-events: none; }
   .preloader-heart { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #5288c1, #7b5cd6); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(82, 136, 193, 0.5); animation: pulse-heart 1.5s infinite; margin-bottom: 20px; }
@@ -39,7 +38,6 @@
   .preloader-text { color: var(--text-s); font-weight: 600; letter-spacing: 1px; animation: blink-text 1.5s infinite; }
   @keyframes blink-text { 0%,100%{opacity:1;} 50%{opacity:.5;} }
 
-  /* АВТОРИЗАЦИЯ */
   .auth-screen { position: absolute; inset: 0; background: var(--bg-sec); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
   .auth-box { width: 100%; max-width: 400px; background: var(--bg); border-radius: 20px; padding: 30px 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid var(--border); }
   .auth-box h2 { text-align: center; font-size: 24px; margin-bottom: 8px; }
@@ -59,7 +57,6 @@
   .code-inputs input { width: 45px; height: 55px; text-align: center; font-size: 24px; font-weight: 700; background: var(--bg-ter); border: 1px solid #2e3d4f; border-radius: 10px; color: var(--text); outline: none; }
   .code-inputs input:focus { border-color: var(--tg-color); }
 
-  /* СТАРТОВЫЙ ЭКРАН */
   .start-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; gap: 20px; background: radial-gradient(circle at 50% 30%, #1a2a3d 0%, #0e1621 70%); position: relative; width: 100%; height: 100%; }
   .start-heart { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #5288c1, #7b5cd6); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 60px rgba(82, 136, 193, 0.4); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.06);} }
@@ -73,7 +70,6 @@
   .start-footer { position: absolute; bottom: 20px; left: 0; right: 0; font-size: 12px; color: var(--text-m); text-align: center; }
   .start-footer b { color: var(--text-s); cursor: pointer; text-decoration: underline;}
 
-  /* ЧАТ БОТА */
   .bot-area { flex:1; display:flex; flex-direction:column; min-height:0; background:var(--bg); background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.012'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E"); }
   .bot-header { display:flex; align-items:center; gap:12px; padding:10px 16px; background:var(--bg-sec); border-bottom:1px solid var(--border); }
   .bot-header .avatar { width:44px; height:44px; }
@@ -112,7 +108,6 @@
   .send-btn:disabled { opacity:.4; }
   .send-btn svg { width:22px; height:22px; fill:currentColor; margin-left:2px; }
 
-  /* КАРТОЧКА */
   .match-card { background:linear-gradient(160deg,#1e2c3d,#16202c); border:1px solid #2e3d4f; border-radius:16px; padding:14px; display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:10px; animation:in .3s ease; width: 100%; }
   .match-card .avatar { width:80px; height:80px; font-size:32px; border:3px solid var(--accent); }
   .match-card .mc-name { font-size:19px; font-weight:700; margin-top:4px; display: flex; align-items: center; gap: 6px;}
@@ -123,7 +118,6 @@
   .mc-tag { font-size:12px; background:var(--bg-ter); color:var(--accent-l); padding:4px 10px; border-radius:10px; }
   .mc-info-row { display:flex; gap:12px; margin-top:6px; font-size:13px; color:var(--text); background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 8px; flex-wrap: wrap; justify-content: center;}
 
-  /* АНКЕТА */
   .view { flex:1; overflow-y:auto; padding:24px 20px; display:flex; flex-direction:column; gap:16px; padding-bottom: 40px; }
   .view h2 { font-size:22px; text-align:center; }
   .view .sub { text-align:center; color:var(--text-s); font-size:14px; margin-top:-8px; margin-bottom: 10px;}
@@ -141,7 +135,6 @@
   .photo-uploader .upload-text { font-size: 12px; color: var(--text-s); margin-top: 4px; }
   #photoInput { display: none; }
 
-  /* ОВЕРЛЕИ */
   .overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
   .overlay.show { display:flex; animation:fade .25s; }
   @keyframes fade { from{opacity:0;} to{opacity:1;} }
@@ -165,6 +158,10 @@
   .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--bg-ter); padding:12px 20px; border-radius:10px; font-size:14px; opacity:0; transition:all .3s; z-index:200; border: 1px solid #2e3d4f; }
   .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
   .toast.err { border-color: var(--danger); color: #ff8a80; }
+  
+  /* ЧАТ */
+  .chat-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg-sec); border-bottom: 1px solid var(--border); }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 6px; background: var(--bg); }
 </style>
 </head>
 <body>
@@ -178,6 +175,7 @@
 
 <div class="app">
   <div class="sidebar" id="app">
+
     <div class="auth-screen" id="authScreen">
       <div class="auth-box">
         <h2>Вход в DiveMatch</h2>
@@ -207,11 +205,7 @@
         <div class="auth-form" id="form-code" style="align-items: center;">
           <p style="margin-bottom: 10px;">Введи код:</p>
           <div class="code-inputs" id="codeInputs">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
+            <input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1">
           </div>
           <button class="auth-btn tg-btn" id="verifyCodeBtn">Подтвердить</button>
           <button class="auth-btn" style="background: transparent; border: 1px solid #2e3d4f; margin-top: 5px;" id="backToAuthBtn">Назад</button>
@@ -225,109 +219,73 @@
         DiveMatch
       </div>
       <div class="spacer"></div>
-      <div class="online-counter">
-        <div class="dot"></div>
-        <b id="topCounter">1</b> онлайн
-      </div>
-      <button class="icon-btn" id="restartBtn">
-        <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-      </button>
+      <div class="online-counter"><div class="dot"></div><b id="topCounter">1</b> онлайн</div>
+      <button class="icon-btn" id="restartBtn"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
     </div>
 
     <div class="start-screen" id="startScreen" style="display:none;">
-      <div class="start-heart">
-        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-      </div>
+      <div class="start-heart"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
       <h1>DiveMatch</h1>
-      <div class="start-online">
-        <div class="dot"></div>
-        <b id="startCounter">1</b> человек сейчас онлайн
-      </div>
+      <div class="start-online"><div class="dot"></div><b id="startCounter">1</b> человек сейчас онлайн</div>
       <p>Умный бот-сваха подберёт тебе идеальную пару.</p>
       <button class="start-btn" id="startBtn">Начать поиск</button>
-      <div class="start-footer">
-        © 2026 DiveMatch.<br>Создатель: <b id="footerCreator">Радостев Виталий Витальевич</b>
-      </div>
+      <div class="start-footer">© 2026 DiveMatch.<br>Создатель: <b id="footerCreator">Радостев Виталий Витальевич</b></div>
     </div>
 
     <div class="bot-area" id="botArea" style="display:none;">
       <div class="bot-header">
         <div class="avatar" style="background:linear-gradient(135deg,#5288c1,#7b5cd6);">🤖</div>
-        <div class="bot-header-info">
-          <div class="bot-header-name">DiveMatch Bot <span class="verify">✓</span></div>
-          <div class="bot-header-status online">онлайн</div>
-        </div>
+        <div class="bot-header-info"><div class="bot-header-name">DiveMatch Bot <span class="verify">✓</span></div><div class="bot-header-status online">онлайн</div></div>
       </div>
       <div class="chat-scroll" id="chatScroll"></div>
       <div class="typing" id="typing"><span id="typingText"></span><span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
       <div class="input-area">
-        <div class="input-wrap">
-          <textarea id="msgInput" rows="1" placeholder="Напиши сообщение..." maxlength="500"></textarea>
+        <div class="input-wrap"><textarea id="msgInput" rows="1" placeholder="Напиши сообщение..." maxlength="500"></textarea></div>
+        <button class="send-btn" id="sendBtn" disabled><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+      </div>
+    </div>
+
+    <!-- ЭКРАН ЛИЧНОГО ЧАТА -->
+    <div class="view" id="privateChatView" style="display:none; padding: 0;">
+      <div class="chat-header">
+        <button class="icon-btn" id="backToBotBtn"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+        <div class="avatar" id="chatUserAvatar" style="width:40px; height:40px; font-size:16px;"></div>
+        <div class="chat-header-info" style="flex:1;">
+          <div class="chat-header-name" id="chatUserName" style="font-weight:600; font-size:16px;"></div>
+          <div style="font-size:12px; color:var(--online);">в сети</div>
         </div>
-        <button class="send-btn" id="sendBtn" disabled>
-          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-        </button>
+      </div>
+      <div class="chat-messages" id="privateChatMessages"></div>
+      <div class="input-area">
+        <div class="input-wrap"><textarea id="privateMsgInput" rows="1" placeholder="Написать сообщение..." maxlength="500"></textarea></div>
+        <button class="send-btn" id="privateSendBtn" disabled><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
       </div>
     </div>
 
     <div class="view" id="profileView" style="display:none;">
       <h2>Твоя анкета</h2>
       <div class="sub">Заполни данные о себе</div>
-      
       <div class="photo-uploader" id="photoUploader" onclick="document.getElementById('photoInput').click()">
-        <div id="photoPlaceholder" style="display:flex; flex-direction:column; align-items:center;">
-          <span class="upload-icon">📷</span>
-          <span class="upload-text">Добавить фото</span>
-        </div>
+        <div id="photoPlaceholder" style="display:flex; flex-direction:column; align-items:center;"><span class="upload-icon">📷</span><span class="upload-text">Добавить фото</span></div>
         <img id="photoPreview" style="display:none;" alt="Фото">
       </div>
       <input type="file" id="photoInput" accept="image/*">
-      
       <div class="field"><label>Имя</label><input type="text" id="pName" placeholder="Как тебя зовут?" maxlength="20"></div>
       <div class="field"><label>Возраст</label><input type="number" id="pAge" placeholder="18+" min="18" max="99"></div>
       <div class="field"><label>Город</label><input type="text" id="pCity" placeholder="Например: Москва" maxlength="30"></div>
-      
-      <!-- ТВОЙ ПОЛ -->
-      <div class="field">
-        <label>Твой пол</label>
-        <div class="chips" id="genderChips">
-          <div class="chip" data-val="Парень">Парень</div>
-          <div class="chip" data-val="Девушка">Девушка</div>
-        </div>
-      </div>
-
-      <!-- КОГО ИЩЕШЬ -->
-      <div class="field">
-        <label>Кого ищешь?</label>
-        <div class="chips" id="lookingChips">
-          <div class="chip" data-val="Парня">Парня</div>
-          <div class="chip" data-val="Девушку">Девушку</div>
-        </div>
-      </div>
-
+      <div class="field"><label>Твой пол</label><div class="chips" id="genderChips"><div class="chip" data-val="Парень">Парень</div><div class="chip" data-val="Девушка">Девушка</div></div></div>
+      <div class="field"><label>Кого ищешь?</label><div class="chips" id="lookingChips"><div class="chip" data-val="Парня">Парня</div><div class="chip" data-val="Девушку">Девушку</div></div></div>
       <div id="maleFields" style="display:none; flex-direction:column; gap:16px;">
         <div class="field"><label>Рост (см)</label><input type="number" id="pHeightM" placeholder="180"></div>
         <div class="field"><label>Работа/учёба</label><input type="text" id="pJobM" placeholder="IT, бизнес..."></div>
       </div>
-
       <div id="femaleFields" style="display:none; flex-direction:column; gap:16px;">
         <div class="field"><label>Рост (см)</label><input type="number" id="pHeightF" placeholder="165"></div>
         <div class="field"><label>Хобби</label><input type="text" id="pHobbyF" placeholder="Танцы..."></div>
       </div>
-
-      <div class="field">
-        <label>Цель</label>
-        <div class="chips" id="goalChips">
-          <div class="chip" data-val="Отношения">Отношения</div>
-          <div class="chip" data-val="Общение">Общение</div>
-          <div class="chip" data-val="Прогулки">Прогулки</div>
-        </div>
-      </div>
-      
+      <div class="field"><label>Цель</label><div class="chips" id="goalChips"><div class="chip" data-val="Отношения">Отношения</div><div class="chip" data-val="Общение">Общение</div><div class="chip" data-val="Прогулки">Прогулки</div></div></div>
       <div class="field"><label>О себе</label><input type="text" id="pBio" placeholder="Девиз" maxlength="80"></div>
-      
       <button class="big-btn" id="saveProfileBtn">Сохранить</button>
-      
       <div class="creator-signature">Разработал: <b>Радостев Виталий Витальевич</b></div>
     </div>
 
@@ -338,21 +296,13 @@
   <div class="about-popup">
     <h2>О проекте</h2>
     <p>DiveMatch — бот-сваха для безопасных знакомств.</p>
-    <div class="creator-box">
-      <div class="name">Радостев Виталий Витальевич</div>
-      <div class="title">Основатель и разработчик</div>
-    </div>
+    <div class="creator-box"><div class="name">Радостев Виталий Витальевич</div><div class="title">Основатель и разработчик</div></div>
     <button class="big-btn" id="aboutClose">Понятно</button>
   </div>
 </div>
 
 <div class="overlay" id="banOverlay">
-  <div class="ban-popup">
-    <div class="ban-icon">🚫</div>
-    <h2>Доступ заблокирован</h2>
-    <p id="banReason">Нарушение правил.</p>
-    <button class="big-btn" id="banOk">Закрыть</button>
-  </div>
+  <div class="ban-popup"><div class="ban-icon">🚫</div><h2>Доступ заблокирован</h2><p id="banReason">Нарушение правил.</p><button class="big-btn" id="banOk">Закрыть</button></div>
 </div>
 
 <div class="overlay" id="matchOverlay">
@@ -361,7 +311,7 @@
     <div class="avatar" id="matchAvatar"></div>
     <div class="mp-name" id="matchName"></div>
     <div class="mp-bio" id="matchBio"></div>
-    <button class="big-btn" id="matchOk">Супер!</button>
+    <button class="big-btn" id="matchOk">Написать сообщение</button>
   </div>
 </div>
 
@@ -369,17 +319,13 @@
 
 <script>
 const CREATOR = { fullName: "Радостев Виталий Витальевич" };
-const state = { isAuth: false, user: { photo: null }, queue: [], seen: 0, matches: 0, liked: [], isBanned: false, currentPhone: '' };
+const state = { isAuth: false, user: { photo: null }, queue: [], seen: 0, matches: 0, liked: [], isBanned: false, currentPhone: '', currentChatUser: null };
 const BAD_FILE_WORDS = ['porn','sex','nude','18+','nsfw','xxx','erotic','hentai','голая','порно','интим','голый','секс'];
 const BAD_TEXT_WORDS = ['хуй','пизда','блядь','сука','ебать','долбоеб','мудак','шлюха','порно','секс','интим'];
 const $ = id => document.getElementById(id);
 
 window.addEventListener('load', () => { setTimeout(() => { $('preloader').classList.add('hidden'); }, 600); });
-window.addEventListener('beforeunload', () => {
-  if (localStorage.getItem('session_id')) {
-    navigator.sendBeacon('/api/offline', JSON.stringify({ session_id: localStorage.getItem('session_id') }));
-  }
-});
+window.addEventListener('beforeunload', () => { if (localStorage.getItem('session_id')) navigator.sendBeacon('/api/offline', JSON.stringify({ session_id: localStorage.getItem('session_id') })); });
 
 if (localStorage.getItem('isLoggedIn') === 'true') {
   $('authScreen').style.display = 'none';
@@ -407,12 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!phone) return showToast('Введите номер', true);
     state.currentPhone = phone;
     $('tgLoginBtn').textContent = 'Отправка...';
-    
     try {
-      const r = await fetch('/api/request_code', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: phone })
-      });
+      const r = await fetch('/api/request_code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone }) });
       const data = await r.json();
       if (data.success) {
         showToast('Перейди в Telegram-бота!', false);
@@ -432,19 +374,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   $('verifyCodeBtn').onclick = async () => {
-    let entered = '';
-    codeInputs.forEach(i => entered += i.value);
+    let entered = ''; codeInputs.forEach(i => entered += i.value);
     if (entered.length < 5) return showToast('Введите 5 цифр', true);
-    
     $('verifyCodeBtn').textContent = 'Проверка...';
-    
     try {
-      const r = await fetch('/api/verify_code', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: state.currentPhone, code: entered })
-      });
+      const r = await fetch('/api/verify_code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: state.currentPhone, code: entered }) });
       const data = await r.json();
-      
       if (data.success) {
         showToast('Успешный вход!', false);
         localStorage.setItem('isLoggedIn', 'true');
@@ -457,144 +392,75 @@ document.addEventListener('DOMContentLoaded', () => {
     finally { $('verifyCodeBtn').textContent = 'Подтвердить'; }
   };
 
-  $('backToAuthBtn').onclick = () => {
-    $('form-code').classList.remove('active');
-    $('form-tg').classList.add('active');
-    codeInputs.forEach(i => i.value = '');
-  };
-
-  $('emailLoginBtn').onclick = () => {
-    const e = $('emailInput').value.trim();
-    if (!e) return showToast('Введите email', true);
-    state.isAuth = true;
-    $('authScreen').style.display = 'none';
-    $('topbar').style.display = 'flex';
-    $('startScreen').style.display = 'flex';
-  };
-
+  $('backToAuthBtn').onclick = () => { $('form-code').classList.remove('active'); $('form-tg').classList.add('active'); codeInputs.forEach(i => i.value = ''); };
+  $('emailLoginBtn').onclick = () => { const e = $('emailInput').value.trim(); if (!e) return showToast('Введите email', true); state.isAuth = true; $('authScreen').style.display = 'none'; $('topbar').style.display = 'flex'; $('startScreen').style.display = 'flex'; };
   $('startBtn').onclick = goStart;
-  $('restartBtn').onclick = () => { 
-    if (confirm('Сбросить аккаунт?')) {
-      localStorage.removeItem('isLoggedIn');
-      location.reload(); 
-    }
+  $('restartBtn').onclick = () => { if (confirm('Сбросить аккаунт?')) { localStorage.removeItem('isLoggedIn'); location.reload(); } };
+  
+  // Кнопка "Назад" из чата
+  $('backToBotBtn').onclick = () => {
+    $('privateChatView').style.display = 'none';
+    $('botArea').style.display = 'flex';
   };
 });
 
 async function updateCounters() {
-  if (!localStorage.getItem('session_id')) {
-    localStorage.setItem('session_id', Math.random().toString(36).substring(2, 15));
-  }
+  if (!localStorage.getItem('session_id')) localStorage.setItem('session_id', Math.random().toString(36).substring(2, 15));
   try {
-    const res = await fetch('/api/ping', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id: localStorage.getItem('session_id') })
-    });
+    const res = await fetch('/api/ping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: localStorage.getItem('session_id') }) });
     const data = await res.json();
     if ($('topCounter')) $('topCounter').textContent = data.count;
     if ($('startCounter')) $('startCounter').textContent = data.count;
   } catch(e) {}
 }
-setInterval(updateCounters, 5000);
+setInterval(updateCounters, 2000);
 
 function avatarEl(person, size=32) {
-  const d = document.createElement('div');
-  d.className = 'avatar';
-  d.style.width = size + 'px'; d.style.height = size + 'px';
-  d.style.fontSize = (size * 0.42) + 'px';
+  const d = document.createElement('div'); d.className = 'avatar';
+  d.style.width = size + 'px'; d.style.height = size + 'px'; d.style.fontSize = (size * 0.42) + 'px';
   if (person.photo) { d.style.backgroundImage = `url(${person.photo})`; d.textContent = person.n ? person.n.charAt(0) : ''; }
   else { d.style.background = `linear-gradient(135deg,#5288c1,#7b5cd6)`; d.textContent = (person.n || '?').charAt(0); }
   return d;
 }
 
 function showToast(text, isError = false) {
-  const t = $('toast');
-  t.textContent = text;
-  t.className = 'toast show' + (isError ? ' err' : '');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => t.classList.remove('show'), 3500);
+  const t = $('toast'); t.textContent = text; t.className = 'toast show' + (isError ? ' err' : '');
+  clearTimeout(showToast._t); showToast._t = setTimeout(() => t.classList.remove('show'), 3500);
 }
 
 function scrollBottom() { $('chatScroll').scrollTop = $('chatScroll').scrollHeight; }
-function banUser(reason) {
-  state.isBanned = true;
-  $('banReason').textContent = reason;
-  $('banOverlay').classList.add('show');
-  $('banOk').onclick = () => location.reload();
-}
-function checkBadText(text) {
-  if (!text) return false;
-  const l = text.toLowerCase();
-  return BAD_TEXT_WORDS.some(w => l.includes(w));
-}
+function banUser(reason) { state.isBanned = true; $('banReason').textContent = reason; $('banOverlay').classList.add('show'); $('banOk').onclick = () => location.reload(); }
+function checkBadText(text) { if (!text) return false; const l = text.toLowerCase(); return BAD_TEXT_WORDS.some(w => l.includes(w)); }
 
 $('photoInput').addEventListener('change', function(e) {
   if (state.isBanned) return;
-  const file = e.target.files[0];
-  if (!file) return;
-  const l = file.name.toLowerCase();
-  if (BAD_FILE_WORDS.some(w => l.includes(w))) return banUser('Фото нарушает правила (18+).');
+  const file = e.target.files[0]; if (!file) return;
+  if (BAD_FILE_WORDS.some(w => file.name.toLowerCase().includes(w))) return banUser('Фото нарушает правила (18+).');
   const reader = new FileReader();
-  reader.onload = evt => {
-    $('photoPreview').src = evt.target.result;
-    $('photoPreview').style.display = 'block';
-    $('photoPlaceholder').style.display = 'none';
-    state.user.photo = evt.target.result;
-  };
+  reader.onload = evt => { $('photoPreview').src = evt.target.result; $('photoPreview').style.display = 'block'; $('photoPlaceholder').style.display = 'none'; state.user.photo = evt.target.result; };
   reader.readAsDataURL(file);
 });
 
 function showFeatures() {
-  addMessage(`<b>Привет! Я DiveMatch Bot 🤖</b><br>Вот что я умею:
-    <ul class="bot-features">
-      <li>📝 Создам анкету</li>
-      <li>🖼 Загружу фото</li>
-      <li>🚫 Блокирую 18+ и мат</li>
-      <li>🔍 Подберу пару</li>
-      <li>❤️ Покажу мэтчи</li>
-    </ul>`, {
-    buttons: [
-      { label: '🚀 Создать анкету', primary: true, cb: askProfile },
-      { label: 'Пропустить', cb: () => addMessage('Без анкеты не смогу найти пару 😔') }
-    ]
+  addMessage(`<b>Привет! Я DiveMatch Bot 🤖</b><br>Вот что я умею:<ul class="bot-features"><li>📝 Создам анкету</li><li>🖼 Загружу фото</li><li>🚫 Блокирую 18+ и мат</li><li>🔍 Подберу пару</li><li>💌 Дам доступ к личным сообщениям</li></ul>`, {
+    buttons: [{ label: '🚀 Создать анкету', primary: true, cb: askProfile }, { label: 'Пропустить', cb: () => addMessage('Без анкеты не смогу найти пару 😔') }]
   });
 }
 
 function goStart() {
-  $('startScreen').style.display = 'none';
-  $('topbar').style.display = 'flex';
-  $('botArea').style.display = 'flex';
+  $('startScreen').style.display = 'none'; $('topbar').style.display = 'flex'; $('botArea').style.display = 'flex';
   $('chatScroll').innerHTML = '';
   addMessage(`Привет! Я <b>DiveMatch Bot</b> 🤖\nСейчас онлайн: <b>${$('topCounter').textContent}</b>`, {});
   setTimeout(showFeatures, 600);
 }
 
-function askProfile() {
-  $('botArea').style.display = 'none';
-  $('profileView').style.display = 'flex';
-  initProfileForm();
-}
+function askProfile() { $('botArea').style.display = 'none'; $('profileView').style.display = 'flex'; initProfileForm(); }
 
 function initProfileForm() {
   const gc = $('genderChips'), goalc = $('goalChips'), lc = $('lookingChips');
-  
-  gc.querySelectorAll('.chip').forEach(c => {
-    c.onclick = () => {
-      gc.querySelectorAll('.chip').forEach(x => x.classList.remove('sel'));
-      c.classList.add('sel');
-      $('maleFields').style.display = c.dataset.val === 'Парень' ? 'flex' : 'none';
-      $('femaleFields').style.display = c.dataset.val === 'Девушка' ? 'flex' : 'none';
-    };
-  });
-
-  lc.querySelectorAll('.chip').forEach(c => {
-    c.onclick = () => { lc.querySelectorAll('.chip').forEach(x => x.classList.remove('sel')); c.classList.add('sel'); };
-  });
-
-  goalc.querySelectorAll('.chip').forEach(c => {
-    c.onclick = () => { goalc.querySelectorAll('.chip').forEach(x => x.classList.remove('sel')); c.classList.add('sel'); };
-  });
+  gc.querySelectorAll('.chip').forEach(c => { c.onclick = () => { gc.querySelectorAll('.chip').forEach(x => x.classList.remove('sel')); c.classList.add('sel'); $('maleFields').style.display = c.dataset.val === 'Парень' ? 'flex' : 'none'; $('femaleFields').style.display = c.dataset.val === 'Девушка' ? 'flex' : 'none'; }; });
+  lc.querySelectorAll('.chip').forEach(c => { c.onclick = () => { lc.querySelectorAll('.chip').forEach(x => x.classList.remove('sel')); c.classList.add('sel'); }; });
+  goalc.querySelectorAll('.chip').forEach(c => { c.onclick = () => { goalc.querySelectorAll('.chip').forEach(x => x.classList.remove('sel')); c.classList.add('sel'); }; });
 }
 
 $('saveProfileBtn').onclick = async () => {
@@ -604,74 +470,34 @@ $('saveProfileBtn').onclick = async () => {
   const looking = document.querySelector('#lookingChips .chip.sel')?.dataset.val;
   const goal = document.querySelector('#goalChips .chip.sel')?.dataset.val;
   const bio = $('pBio').value.trim();
-  
-  if (!name) return showToast('Введи имя');
-  if (!age || age < 18) return showToast('Возраст 18+');
-  if (!city) return showToast('Укажи город');
-  if (!gender) return showToast('Выбери свой пол');
-  if (!looking) return showToast('Выбери кого ищешь');
-  if (!goal) return showToast('Выбери цель');
+  if (!name) return showToast('Введи имя'); if (!age || age < 18) return showToast('Возраст 18+'); if (!city) return showToast('Укажи город'); if (!gender) return showToast('Выбери свой пол'); if (!looking) return showToast('Выбери кого ищешь'); if (!goal) return showToast('Выбери цель');
   if (checkBadText(name) || checkBadText(bio) || checkBadText(city)) return banUser('Обнаружен запрещённый контент.');
 
   let height, extra;
-  if (gender === 'Парень') {
-    height = parseInt($('pHeightM').value); extra = $('pJobM').value.trim();
-    if (!height || !extra) return showToast('Заполни рост и работу');
-  } else {
-    height = parseInt($('pHeightF').value); extra = $('pHobbyF').value.trim();
-    if (!height || !extra) return showToast('Заполни рост и хобби');
-  }
+  if (gender === 'Парень') { height = parseInt($('pHeightM').value); extra = $('pJobM').value.trim(); if (!height || !extra) return showToast('Заполни рост и работу'); }
+  else { height = parseInt($('pHeightF').value); extra = $('pHobbyF').value.trim(); if (!height || !extra) return showToast('Заполни рост и хобби'); }
   
   state.user = { name, age, city, gender, looking, goal, bio: bio || '—', photo: state.user.photo, height, extra };
-
   $('saveProfileBtn').textContent = 'Сохранение...';
-  
-  try {
-    await fetch('/api/save_profile', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.user)
-    });
-  } catch(e) { console.log('Ошибка сохранения'); }
-
+  try { await fetch('/api/save_profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state.user) }); } catch(e) {}
   $('saveProfileBtn').textContent = 'Сохранить';
-  $('profileView').style.display = 'none';
-  $('botArea').style.display = 'flex';
-  $('chatScroll').innerHTML = '';
-  
+  $('profileView').style.display = 'none'; $('botArea').style.display = 'flex'; $('chatScroll').innerHTML = '';
   addMessage(`Отлично, <b>${name}</b>! Анкета сохранена на сервере.`);
   buildQueue();
 };
 
 async function buildQueue() {
   try {
-    const res = await fetch('/api/get_profiles');
-    const allProfiles = await res.json();
-    
-    // Теперь ищем по полю looking (кого ищешь)
+    const res = await fetch('/api/get_profiles'); const allProfiles = await res.json();
     const searchGender = state.user.looking === 'Парня' ? 'Парень' : 'Девушка';
-    
     let list = allProfiles.filter(p => p.gender === searchGender && p.name !== state.user.name);
-    
-    list = list.map(p => ({
-      n: p.name, a: p.age, g: p.gender, city: p.city, goal: p.goal, bio: p.bio, photo: p.photo,
-      height: p.height, 
-      job: p.gender === 'Парень' ? p.extra : null,
-      hobby: p.gender === 'Девушка' ? p.extra : null,
-      tags: ['новый']
-    }));
-
+    list = list.map(p => ({ n: p.name, a: p.age, g: p.gender, city: p.city, goal: p.goal, bio: p.bio, photo: p.photo, height: p.height, job: p.gender === 'Парень' ? p.extra : null, hobby: p.gender === 'Девушка' ? p.extra : null, tags: ['новый'] }));
     for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [list[i], list[j]] = [list[j], list[i]]; }
     state.queue = list;
-  } catch(e) {
-    state.queue = [];
-  }
+  } catch(e) { state.queue = []; }
 
   if (state.queue.length === 0) {
-    setTimeout(() => {
-      addMessage('Пока нет других анкет 😔\nПригласи друзей, чтобы они зарегистрировались!', {
-        buttons: [{ label: 'Обновить 🔄', primary: true, cb: buildQueue }]
-      });
-    }, 800);
+    setTimeout(() => addMessage('Пока нет других анкет 😔\nПригласи друзей, чтобы они зарегистрировались!', { buttons: [{ label: 'Обновить 🔄', primary: true, cb: buildQueue }] }), 800);
   } else {
     setTimeout(() => addMessage(`Найдено анкет: <b>${state.queue.length}</b>`, { buttons: [{ label: 'Показать анкету', primary: true, cb: showNextCard }] }), 800);
   }
@@ -682,74 +508,36 @@ function createCardHTML(p) {
   if (p.g === 'Парень') info += ` <span>📏 ${p.height} см</span> <span>💼 ${p.job || '—'}</span>`;
   else info += ` <span>📏 ${p.height} см</span> <span>✨ ${p.hobby || '—'}</span>`;
   const avStyle = p.photo ? `background-image:url(${p.photo});background-size:cover;color:transparent;` : `background:linear-gradient(135deg,#5288c1,#7b5cd6);`;
-  return `<div class="match-card">
-    <div class="avatar" style="width:80px;height:80px;font-size:32px;border:3px solid var(--accent);${avStyle}">${p.photo ? '' : p.n.charAt(0)}</div>
-    <div class="mc-name">${p.n}, ${p.a} <span class="mc-status">в сети</span></div>
-    <div class="mc-info-row">${info}</div>
-    <div class="mc-bio">"${p.bio}"</div>
-    <div class="mc-tags"><span class="mc-tag">🎯 ${p.goal}</span></div>
-  </div>`;
+  return `<div class="match-card"><div class="avatar" style="width:80px;height:80px;font-size:32px;border:3px solid var(--accent);${avStyle}">${p.photo ? '' : p.n.charAt(0)}</div><div class="mc-name">${p.n}, ${p.a} <span class="mc-status">в сети</span></div><div class="mc-info-row">${info}</div><div class="mc-bio">"${p.bio}"</div><div class="mc-tags"><span class="mc-tag">🎯 ${p.goal}</span></div></div>`;
 }
 
 function addMessage(text, opts={}) {
-  const wrap = document.createElement('div');
-  wrap.className = 'msg ' + (opts.from || 'in');
-  const av = avatarEl(opts.person || { n: '🤖' }, 32);
-  if (opts.from === 'out') av.style.visibility = 'hidden';
-  wrap.appendChild(av);
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble';
+  const wrap = document.createElement('div'); wrap.className = 'msg ' + (opts.from || 'in');
+  const av = avatarEl(opts.person || { n: '🤖' }, 32); if (opts.from === 'out') av.style.visibility = 'hidden';
+  wrap.appendChild(av); const bubble = document.createElement('div'); bubble.className = 'bubble';
   if (opts.person) bubble.innerHTML = createCardHTML(opts.person);
-  if (text) {
-    const t = document.createElement('div');
-    t.className = 'bubble-text';
-    t.innerHTML = text;
-    if (opts.person) t.style.marginTop = '10px';
-    bubble.appendChild(t);
-  }
+  if (text) { const t = document.createElement('div'); t.className = 'bubble-text'; t.innerHTML = text; if (opts.person) t.style.marginTop = '10px'; bubble.appendChild(t); }
   if (opts.buttons) {
-    const kb = document.createElement('div');
-    kb.className = 'kb' + (opts.buttons.length === 1 ? ' single' : '');
-    opts.buttons.forEach(b => {
-      const btn = document.createElement('button');
-      btn.className = 'kb-btn' + (b.primary ? ' primary' : '');
-      btn.textContent = b.label;
-      btn.onclick = () => { if (!b.keep) kb.remove(); b.cb && b.cb(btn); };
-      kb.appendChild(btn);
-    });
+    const kb = document.createElement('div'); kb.className = 'kb' + (opts.buttons.length === 1 ? ' single' : '');
+    opts.buttons.forEach(b => { const btn = document.createElement('button'); btn.className = 'kb-btn' + (b.primary ? ' primary' : ''); btn.textContent = b.label; btn.onclick = () => { if (!b.keep) kb.remove(); b.cb && b.cb(btn); }; kb.appendChild(btn); });
     bubble.appendChild(kb);
   }
-  wrap.appendChild(bubble);
-  $('chatScroll').appendChild(wrap);
-  scrollBottom();
-  return wrap;
+  wrap.appendChild(bubble); $('chatScroll').appendChild(wrap); scrollBottom(); return wrap;
 }
 
-function botTyping(ms, cb, label) {
-  $('typingText').textContent = label || 'Бот печатает';
-  $('typing').classList.add('show');
-  scrollBottom();
-  setTimeout(() => { $('typing').classList.remove('show'); cb && cb(); }, ms);
-}
+function botTyping(ms, cb, label) { $('typingText').textContent = label || 'Бот печатает'; $('typing').classList.add('show'); scrollBottom(); setTimeout(() => { $('typing').classList.remove('show'); cb && cb(); }, ms); }
 
 function showNextCard() {
   if (state.isBanned) return;
-  if (!state.queue.length) {
-    addMessage('Анкеты закончились! 🎉', { buttons: [{ label: 'Обновить 🔄', primary: true, cb: buildQueue }] });
-    return;
-  }
-  const p = state.queue.shift();
-  state.seen++;
-  addMessage('', { person: p, buttons: [
-    { label: '❤️ Нравится', primary: true, cb: () => swipe(p, true) },
-    { label: '👎 Пропустить', cb: () => swipe(p, false) }
-  ]});
+  if (!state.queue.length) { addMessage('Анкеты закончились! 🎉', { buttons: [{ label: 'Обновить 🔄', primary: true, cb: buildQueue }] }); return; }
+  const p = state.queue.shift(); state.seen++;
+  addMessage('', { person: p, buttons: [{ label: '❤️ Нравится', primary: true, cb: () => swipe(p, true) }, { label: '👎 Пропустить', cb: () => swipe(p, false) }] });
 }
 
 function swipe(p, liked) {
   if (state.isBanned) return;
   if (liked) {
-    if (Math.random() < 0.6) {
+    if (Math.random() < 0.8) { // Увеличили шанс мэтча до 80% для теста
       state.matches++; state.liked.push(p.n);
       botTyping(700, () => { addMessage('<b>Это мэтч!</b> 🎉', {}); showMatchPopup(p); }, 'Проверяю...');
     } else {
@@ -767,31 +555,111 @@ function showMatchPopup(p) {
   $('matchName').textContent = p.n + ', ' + p.a;
   $('matchBio').textContent = `📍 ${p.city} · ${p.bio}`;
   $('matchOverlay').classList.add('show');
+  
+  // Кнопка "Написать" открывает чат
   $('matchOk').onclick = () => {
     $('matchOverlay').classList.remove('show');
-    addMessage('Что дальше?', { buttons: [{ label: 'Смотреть ещё 👉', primary: true, cb: showNextCard }, { label: 'Мэтчи ❤️', cb: showMatches }] });
+    openPrivateChat(p.n);
   };
 }
+
+// ==========================================
+// ЛОГИКА ЛИЧНЫХ СООБЩЕНИЙ
+// ==========================================
+let chatInterval = null;
+
+function openPrivateChat(userName) {
+  state.currentChatUser = userName;
+  $('botArea').style.display = 'none';
+  $('privateChatView').style.display = 'flex';
+  
+  $('chatUserName').textContent = userName;
+  $('chatUserAvatar').style.background = `linear-gradient(135deg,#5288c1,#7b5cd6)`;
+  $('chatUserAvatar').textContent = userName.charAt(0).toUpperCase();
+  $('privateChatMessages').innerHTML = '';
+  
+  loadMessages();
+  
+  // Обновляем чат каждые 3 секунды
+  if (chatInterval) clearInterval(chatInterval);
+  chatInterval = setInterval(loadMessages, 3000);
+}
+
+async function loadMessages() {
+  if (!state.currentChatUser) return;
+  try {
+    const r = await fetch('/api/get_messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user1: state.user.name, user2: state.currentChatUser })
+    });
+    const msgs = await r.json();
+    
+    const container = $('privateChatMessages');
+    const isScrolledToBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
+    
+    container.innerHTML = '';
+    if (msgs.length === 0) {
+      container.innerHTML = '<div style="text-align:center; color:var(--text-s); margin-top:20px;">Напишите первым! 👋</div>';
+    } else {
+      msgs.forEach(m => {
+        const wrap = document.createElement('div');
+        wrap.className = 'msg ' + (m.from === state.user.name ? 'out' : 'in');
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.innerHTML = `<div class="bubble-text">${m.text}</div><div style="font-size:10px; color:var(--text-s); text-align:right; margin-top:4px;">${m.time}</div>`;
+        wrap.appendChild(bubble);
+        container.appendChild(wrap);
+      });
+    }
+    
+    if (isScrolledToBottom) container.scrollTop = container.scrollHeight;
+  } catch(e) {}
+}
+
+$('privateMsgInput').addEventListener('input', () => {
+  $('privateMsgInput').style.height = 'auto';
+  $('privateMsgInput').style.height = Math.min($('privateMsgInput').scrollHeight, 100) + 'px';
+  $('privateSendBtn').disabled = !$('privateMsgInput').value.trim();
+});
+
+$('privateSendBtn').onclick = async () => {
+  const text = $('privateMsgInput').value.trim();
+  if (!text || !state.currentChatUser) return;
+  
+  $('privateMsgInput').value = '';
+  $('privateMsgInput').style.height = 'auto';
+  $('privateSendBtn').disabled = true;
+  
+  try {
+    await fetch('/api/send_message', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: state.user.name, to: state.currentChatUser, text: text })
+    });
+    loadMessages();
+  } catch(e) { showToast('Ошибка отправки', true); }
+};
+
+// ==========================================
+// КОНЕЦ ЛОГИКИ ЛИЧНЫХ СООБЩЕНИЙ
+// ==========================================
 
 function showMatches() {
   if (state.isBanned) return;
   if (!state.liked.length) return addMessage('Пока нет мэтчей 😔', { buttons: [{ label: 'Смотреть анкеты', primary: true, cb: showNextCard }] });
-  const list = state.liked.map(n => `• ${n}`).join('\n');
-  addMessage(`<b>Твои мэтчи (${state.liked.length}):</b>\n${list}`, { buttons: [{ label: 'Ещё 👉', primary: true, cb: showNextCard }] });
+  
+  // Показываем список мэтчей с кнопками "Написать"
+  state.liked.forEach(name => {
+    addMessage(`<b>Мэтч с ${name}</b>`, {
+      buttons: [{ label: '💌 Написать', primary: true, cb: () => openPrivateChat(name) }]
+    });
+  });
 }
 
-$('msgInput').addEventListener('input', () => {
-  $('msgInput').style.height = 'auto';
-  $('msgInput').style.height = Math.min($('msgInput').scrollHeight, 100) + 'px';
-  $('sendBtn').disabled = !$('msgInput').value.trim();
-});
-$('msgInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!$('sendBtn').disabled) $('sendBtn').click(); }
-});
+$('msgInput').addEventListener('input', () => { $('msgInput').style.height = 'auto'; $('msgInput').style.height = Math.min($('msgInput').scrollHeight, 100) + 'px'; $('sendBtn').disabled = !$('msgInput').value.trim(); });
+$('msgInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!$('sendBtn').disabled) $('sendBtn').click(); } });
 $('sendBtn').onclick = () => {
   if (state.isBanned) return;
-  const text = $('msgInput').value.trim();
-  if (!text) return;
+  const text = $('msgInput').value.trim(); if (!text) return;
   if (checkBadText(text)) return banUser('В сообщении обнаружен мат.');
   addMessage(text, { from: 'out' });
   $('msgInput').value = ''; $('msgInput').style.height = 'auto'; $('sendBtn').disabled = true;
