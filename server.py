@@ -12,7 +12,7 @@ import json
 app = Flask(__name__)
 CORS(app)
 
-# --- НАСТРОЙКИ БОТА (ЗАМЕНИ НА СВОИ) ---
+# --- НАСТРОЙКИ БОТА ---
 BOT_TOKEN = "8825869613:AAHxwoPoJXFBWIFT6cxgeL_9vsj4JqvZGOU"  # <-- ЗАМЕНИ
 BOT_USERNAME = "DiveMatch_Bot"
 ADMIN_ID = "8378052126"  # <-- ЗАМЕНИ
@@ -20,35 +20,42 @@ ADMIN_ID = "8378052126"  # <-- ЗАМЕНИ
 SECRET_KEY = "DiveMatchSuperSecretKey2026"
 DB_FILE = "database.json"
 
-# --- РАБОТА С ФАЙЛОМ БАЗЫ ДАННЫХ ---
 def load_db():
     if os.path.exists(DB_FILE):
-        with open(DB_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
+        try:
+            with open(DB_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except:
+            pass
     return {"online": {}, "profiles": []}
 
 def save_db(data):
     with open(DB_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-db = load_db()
-
-def send_telegram_msg(chat_id, text, reply_markup=None):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
-    if reply_markup:
-        payload["reply_markup"] = reply_markup
-    try:
-        requests.post(url, json=payload, timeout=5)
-        return True
-    except Exception as e:
-        print("Ошибка ТГ:", e)
-        return False
-
 def generate_code(phone):
     hash_str = hashlib.md5((phone + SECRET_KEY).encode()).hexdigest()
     num = int(hash_str, 16) % 90000 + 10000
     return str(num)
+
+# --- ОЧИСТКА СТАРЫХ ПОЛЬЗОВАТЕЛЕЙ (ЧТОБЫ ОНЛАЙН НЕ ЗАВИСАЛ) ---
+def cleanup_online():
+    while True:
+        try:
+            db = load_db()
+            now = time.time()
+            # Удаляем тех, кто не заходил больше 2 минут
+            to_delete = [sid for sid, last_seen in db.get("online", {}).items() if now - last_seen > 120]
+            if to_delete:
+                for sid in to_delete:
+                    del db["online"][sid]
+                save_db(db)
+                print(f"[ОЧИСТКА] Удалено {len(to_delete)} неактивных пользователей")
+        except Exception as e:
+            print("Ошибка очистки:", e)
+        time.sleep(30)
+
+threading.Thread(target=cleanup_online, daemon=True).start()
 
 def telegram_bot_listener():
     last_update_id = 0
@@ -77,13 +84,21 @@ def telegram_bot_listener():
                                 "resize_keyboard": True,
                                 "one_time_keyboard": True
                             }
-                            send_telegram_msg(chat_id, f"Привет, {username}! 👋\nНажми кнопку внизу, чтобы получить код.", reply_markup=keyboard)
+                            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={
+                                "chat_id": chat_id,
+                                "text": f"Привет, {username}! 👋\nНажми кнопку внизу, чтобы получить код.",
+                                "reply_markup": keyboard
+                            })
                         
                         elif "contact" in msg:
                             phone = msg["contact"]["phone_number"].replace("+", "")
                             clean_phone = ''.join(filter(str.isdigit, phone))
                             code = generate_code(clean_phone)
-                            send_telegram_msg(chat_id, f"🔑 Ваш код для входа: <code>{code}</code>")
+                            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={
+                                "chat_id": chat_id,
+                                "text": f"🔑 Ваш код для входа: <code>{code}</code>",
+                                "parse_mode": "HTML"
+                            })
         except Exception as e:
             print("Ошибка бота:", e)
         time.sleep(1)
@@ -92,8 +107,7 @@ threading.Thread(target=telegram_bot_listener, daemon=True).start()
 
 @app.route('/api/request_code', methods=['POST'])
 def request_code():
-    bot_url = f"https://t.me/{BOT_USERNAME}"
-    return jsonify({"success": True, "bot_url": bot_url})
+    return jsonify({"success": True, "bot_url": f"https://t.me/{BOT_USERNAME}"})
 
 @app.route('/api/verify_code', methods=['POST'])
 def verify_code():
@@ -108,17 +122,14 @@ def verify_code():
         return jsonify({"success": False, "message": "Нет данных"}), 400
 
     clean_phone = ''.join(filter(str.isdigit, phone))
-    expected_code = generate_code(clean_phone)
-    
-    if expected_code == user_code:
+    if generate_code(clean_phone) == user_code:
         return jsonify({"success": True, "message": "Успешный вход"})
-    
     return jsonify({"success": False, "message": "Неверный код"}), 400
 
 @app.route('/api/save_profile', methods=['POST'])
 def save_profile():
     data = request.json
-    db = load_db() # Загружаем свежие данные
+    db = load_db()
     db["profiles"].append(data)
     save_db(db)
     return jsonify({"success": True})
@@ -133,14 +144,27 @@ def ping():
     data = request.json or {}
     session_id = data.get('session_id')
     
-    db = load_db() # Загружаем базу
-    
     if session_id:
-        db["online"][session_id] = True
-        save_db(db) # Сохраняем в файл
+        db = load_db()
+        if "online" not in db: db["online"] = {}
+        db["online"][session_id] = time.time() # Запоминаем время захода
+        save_db(db)
         
-    count = len(db["online"]) if len(db["online"]) > 0 else 1
+    db = load_db()
+    count = len(db.get("online", {})) if len(db.get("online", {})) > 0 else 1
     return jsonify({"count": count})
+
+# Обработка закрытия страницы (когда браузер выключают)
+@app.route('/api/offline', methods=['POST'])
+def offline():
+    data = request.json or {}
+    session_id = data.get('session_id')
+    if session_id:
+        db = load_db()
+        if "online" in db and session_id in db["online"]:
+            del db["online"][session_id]
+            save_db(db)
+    return jsonify({"success": True})
 
 @app.route('/')
 def index():
